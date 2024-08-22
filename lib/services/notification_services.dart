@@ -2,7 +2,10 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:app_settings/app_settings.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+// import 'package:firebase_firestore/firebase_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -92,6 +95,9 @@ class NotificationServices {
     });
 
     FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessageHandler);
+
+    // Set up token refresh listener
+    setupTokenRefreshListener();
   }
 
   Future<void> showNotification(RemoteMessage message) async {
@@ -140,6 +146,28 @@ class NotificationServices {
     await _flutterLocalNotificationPlugin.show(
         Random().nextInt(1000), title, body, platformChannelSpecifics,
         payload: 'Trucker');
+  }
+
+  void setupTokenRefreshListener() {
+    FirebaseMessaging.instance.onTokenRefresh.listen((String newToken) async {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        try {
+          // Update the device token in Firestore, replacing the previous token
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .set({
+            'token': newToken,
+          }, SetOptions(merge: true));
+          print("Device token updated successfully.");
+        } catch (e) {
+          print("Error updating device token: $e");
+        }
+      }
+    }).onError((error) {
+      print("Error setting up token refresh listener: $error");
+    });
   }
 }
 

@@ -191,27 +191,7 @@ class AuthController extends GetxController {
     }
   }
 
-  void setupTokenRefreshListener() {
-    FirebaseMessaging.instance.onTokenRefresh.listen((String newToken) async {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        try {
-          // Update the device token in Firestore
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-            'deviceToken': newToken,
-          }, SetOptions(merge: true));
-          print("Device token updated successfully.");
-        } catch (e) {
-          print("Error updating device token: $e");
-        }
-      }
-    }).onError((error) {
-      print("Error setting up token refresh listener: $error");
-    });
-  }
+  
 
   // Method to get the current user UID
   String? getCurrentUserUID() {
