@@ -1,0 +1,49 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "trucker-edge-b4b57",
+          "appId": "1:61985665289:android:6c24e6456e8959597763d8",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "trucker-edge-b4b57",
+          "configurations": {
+            "android": "1:61985665289:android:6c24e6456e8959597763d8",
+            "ios": "1:61985665289:ios:311dd79c6d7a23097763d8"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "emulators": {
+    "functions": {
+      "port": 5001
+    },
+    "pubsub": {
+      "host": "127.0.0.1",
+      "port": 8086
+    },
+    "ui": {
+      "enabled": true,
+      "port": 4000
+    },
+    "singleProjectMode": true
+  }
+}

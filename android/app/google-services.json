@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61985665289",
+    "project_id": "trucker-edge-b4b57",
+    "storage_bucket": "trucker-edge-b4b57.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61985665289:android:6c24e6456e8959597763d8",
+        "android_client_info": {
+          "package_name": "com.csgpakistantruckeredge.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-3xXaMQokiH2BerjHKRnahO2JaYu6uY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
