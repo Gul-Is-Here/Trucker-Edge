@@ -47,100 +47,109 @@ async function sendNotification(title, body, topicName = null) {
     }
 }
 
-// Function to transfer and delete data for all users
-async function transferAndDeleteDataForAllUsers() {
+// Function to transfer and delete weekly data
+async function transferAndDeleteWeeklyData() {
     try {
-        const sourceCollection = admin.firestore().collection("calculatedValues");
-        const destinationCollection = admin.firestore().collection("history");
+        // Calculate the start and end dates of the current week
+        const now = new Date();
+        const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Monday as start
+        const endOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 7)); // Sunday as end
 
-        // Fetch users
-        const usersSnapshot = await admin.firestore().collection("users").get();
-        
+        logger.info(`Start of Week: ${startOfWeek}`);
+        logger.info(`End of Week: ${endOfWeek}`);
+
+        // Query documents in the calculatedValues subcollection within the current week
+        const usersSnapshot = await admin.firestore().collection('users').get();
+
         for (const userDoc of usersSnapshot.docs) {
             const userId = userDoc.id;
+            const userDocRef = admin.firestore().collection('users').doc(userId);
 
             // Fetch data related to this user
-            const userSourceCollection = sourceCollection.where('userId', '==', userId);
-            const snapshot = await userSourceCollection.get();
-            const batch = admin.firestore().batch();
+            const calculatedValuesSnapshot = await userDocRef.collection('calculatedValues')
+                .where('timestamp', '>=', startOfWeek)
+                .where('timestamp', '<=', endOfWeek)
+                .get();
 
-            snapshot.forEach((doc) => {
-                // Add the document to the destination collection
-                batch.set(destinationCollection.doc(doc.id), doc.data());
-            });
+            const mileageFeeSnapshot = await userDocRef.collection('perMileageCost').get();
+            const truckPaymentSnapshot = await userDocRef.collection('truckPaymentCollection').get();
 
-            // Commit the batch
-            await batch.commit();
-            logger.info(`Data transferred successfully for user ${userId}.`);
+            // Prepare data to be transferred
+            const combinedData = {
+                calculatedValues: [],
+                mileageFee: [],
+                truckPayment: [],
+                transferTimestamp: new Date().toISOString() // Add a timestamp for when the transfer happens
+            };
 
-            // Delete documents from the source collection
-            const deleteBatch = admin.firestore().batch();
-            snapshot.forEach((doc) => {
-                deleteBatch.delete(doc.ref);
-            });
+            // Add calculated values data and delete the documents
+            for (const doc of calculatedValuesSnapshot.docs) {
+                combinedData.calculatedValues.push(doc.data());
+                try {
+                    await doc.ref.delete();
+                    logger.info(`Document ${doc.id} deleted successfully.`);
+                } catch (e) {
+                    logger.error(`Error deleting document ${doc.id}: ${e}`);
+                }
+            }
 
-            // Commit the delete batch
-            await deleteBatch.commit();
-            logger.info(`Old data deleted successfully for user ${userId}.`);
+            // Add mileage fee data without deleting
+            for (const doc of mileageFeeSnapshot.docs) {
+                combinedData.mileageFee.push(doc.data());
+            }
 
-            // Send notification to the user about successful data transfer
-            await sendNotification("Data Transferred Successfully", "Your data has been transferred and deleted successfully.", 'loads');
+            // Add truck payment data without deleting
+            for (const doc of truckPaymentSnapshot.docs) {
+                combinedData.truckPayment.push(doc.data());
+            }
+
+            // Set a new document in the history collection with a unique ID
+            const historyDocId = admin.firestore().collection('users').doc().id; // Generate a unique ID
+            const newHistoryDoc = userDocRef.collection('history').doc(historyDocId);
+            await newHistoryDoc.set(combinedData);
+
+            logger.info(`Data transferred and deleted successfully for user ${userId}.`);
         }
-    } catch (error) {
-        logger.error("Error transferring and deleting data", error);
+    } catch (e) {
+        logger.error('Error in transferAndDeleteWeeklyData:', e);
     }
 }
 
 // Scheduled function to send Monday morning notification to all users and transfer data
-exports.sendMondayNotification = onSchedule('every monday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
+exports.sendMondayNotification = onSchedule({
+    schedule: 'every monday 06:00',
+    timeZone: 'America/Chicago',
+    options: {
+        cpu: 1, // 1 CPU core
+        memory: '512MiB', // 512 MiB of memory
+    }
+}, async (context) => {
     await sendNotification("Your new week starts!", "It's Monday morning. Get ready to add your loads.", 'loads');
-    await transferAndDeleteDataForAllUsers();
+    await transferAndDeleteWeeklyData(); // Use the weekly transfer function
 });
 
-// Scheduled function to send reminder notifications on Tuesday, Wednesday, Thursday, Friday, and Saturday, and transfer data
-exports.remindToAddLoadTuesday = onSchedule('every tuesday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
+// Scheduled function to send reminder notifications on Friday and transfer data
+exports.remindToAddLoadFriday = onSchedule({
+    schedule: 'every friday 06:00',
+    timeZone: 'America/Chicago',
+    options: {
+        cpu: 1, // 1 CPU core
+        memory: '512MiB', // 512 MiB of memory
+    }
+}, async (context) => {
     await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
-    await transferAndDeleteDataForAllUsers();
-});
-
-exports.remindToAddLoadWednesday = onSchedule('every wednesday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
-    await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
-    await transferAndDeleteDataForAllUsers();
-});
-
-exports.remindToAddLoadThursday = onSchedule('every thursday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
-    await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
-    await transferAndDeleteDataForAllUsers();
-});
-
-exports.remindToAddLoadFriday = onSchedule('every friday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
-    await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
-    await transferAndDeleteDataForAllUsers();
-});
-
-exports.remindToAddLoadSaturday = onSchedule('every saturday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
-    await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
-    await transferAndDeleteDataForAllUsers();
 });
 
 // Scheduled function to send "Hurry up to add loads" notification on Sunday, and transfer data
-exports.sendSundayNotification = onSchedule('every sunday 06:00', {
-    timeZone: 'America/Chicago'
-}, async () => {
+exports.sendSundayNotification = onSchedule({
+    schedule: 'every sunday 06:00',
+    timeZone: 'America/Chicago',
+    options: {
+        cpu: 1, // 1 CPU core
+        memory: '512MiB', // 512 MiB of memory
+    }
+}, async (context) => {
     await sendNotification("Hurry up to add loads!", "Hurry up! Your loads will be transferred soon.", 'loads');
-    await transferAndDeleteDataForAllUsers();
 });
 
 // Example HTTP function (can be used for testing)
