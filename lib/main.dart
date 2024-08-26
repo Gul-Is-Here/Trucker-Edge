@@ -38,7 +38,6 @@ void main() async {
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
     SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    await scheduleWeeklyAlarm(); // Ensure this completes before running the app
   } catch (e) {
     print("Error during initialization: $e");
   }
@@ -57,29 +56,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-Future<void> scheduleWeeklyAlarm() async {
-  try {
-    final now = DateTime.now();
-    final nextMonday = now.add(Duration(days: (8 - now.weekday) % 7));
-    final nextMondayMorning =
-        DateTime(nextMonday.year, nextMonday.month, nextMonday.day, 5);
-    final initialDelay = nextMondayMorning.difference(now);
-    print('Initial Delay: $initialDelay');
-    print('Next Monday: $nextMonday');
-    print('Next Monday Morning: $nextMondayMorning');
 
-    // await AndroidAlarmManager.periodic(
-    //   const Duration(days: 7),
-    //   0,
-    //   transferAndDeleteWeeklyData,
-    //   startAt: DateTime.now().add(initialDelay),
-    //   exact: true,
-    //   wakeup: true,
-    // );
-  } catch (e) {
-    print("Error scheduling weekly alarm: $e");
-  }
-}
 
 Future<void> transferAndDeleteWeeklyData() async {
   try {

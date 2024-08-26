@@ -95,7 +95,7 @@ class MyDrawerWidget extends StatelessWidget {
                           fontFamily: robotoRegular,
                           color: AppColor().primaryAppColor)),
                   onTap: () {
-                    // Get.off(() => CombinedAnalyticsScreen());
+                    Get.off(() => CombinedAnalyticsScreen());
                     Get.back();
                   },
                 ),
