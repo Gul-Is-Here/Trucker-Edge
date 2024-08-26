@@ -65,55 +65,61 @@ async function transferAndDeleteWeeklyData() {
             const userId = userDoc.id;
             const userDocRef = admin.firestore().collection('users').doc(userId);
 
-            // Fetch data related to this user
+            // Fetch the single document for the current week
             const calculatedValuesSnapshot = await userDocRef.collection('calculatedValues')
                 .where('timestamp', '>=', startOfWeek)
                 .where('timestamp', '<=', endOfWeek)
+                .limit(1) // There should be only one document
                 .get();
 
-            const mileageFeeSnapshot = await userDocRef.collection('perMileageCost').get();
-            const truckPaymentSnapshot = await userDocRef.collection('truckPaymentCollection').get();
+            if (!calculatedValuesSnapshot.empty) {
+                const doc = calculatedValuesSnapshot.docs[0];
 
-            // Prepare data to be transferred
-            const combinedData = {
-                calculatedValues: [],
-                mileageFee: [],
-                truckPayment: [],
-                transferTimestamp: new Date().toISOString() // Add a timestamp for when the transfer happens
-            };
+                // Prepare data to be transferred
+                const combinedData = {
+                    calculatedValues: doc.data(),
+                    mileageFee: [],
+                    truckPayment: [],
+                    transferTimestamp: new Date().toISOString() // Add a timestamp for when the transfer happens
+                };
 
-            // Add calculated values data and delete the documents
-            for (const doc of calculatedValuesSnapshot.docs) {
-                combinedData.calculatedValues.push(doc.data());
+                // Fetch related data without deleting it
+                const mileageFeeSnapshot = await userDocRef.collection('perMileageCost').get();
+                const truckPaymentSnapshot = await userDocRef.collection('truckPaymentCollection').get();
+
+                // Add mileage fee data
+                for (const mileageDoc of mileageFeeSnapshot.docs) {
+                    combinedData.mileageFee.push(mileageDoc.data());
+                }
+
+                // Add truck payment data
+                for (const truckDoc of truckPaymentSnapshot.docs) {
+                    combinedData.truckPayment.push(truckDoc.data());
+                }
+
+                // Set a new document in the history collection with a unique ID
+                const historyDocId = admin.firestore().collection('users').doc().id; // Generate a unique ID
+                const newHistoryDoc = userDocRef.collection('history').doc(historyDocId);
+                await newHistoryDoc.set(combinedData);
+
+                // Delete the transferred document
                 try {
                     await doc.ref.delete();
                     logger.info(`Document ${doc.id} deleted successfully.`);
                 } catch (e) {
                     logger.error(`Error deleting document ${doc.id}: ${e}`);
                 }
+
+                logger.info(`Data transferred and deleted successfully for user ${userId}.`);
+            } else {
+                logger.info(`No documents found for user ${userId} in the current week.`);
             }
-
-            // Add mileage fee data without deleting
-            for (const doc of mileageFeeSnapshot.docs) {
-                combinedData.mileageFee.push(doc.data());
-            }
-
-            // Add truck payment data without deleting
-            for (const doc of truckPaymentSnapshot.docs) {
-                combinedData.truckPayment.push(doc.data());
-            }
-
-            // Set a new document in the history collection with a unique ID
-            const historyDocId = admin.firestore().collection('users').doc().id; // Generate a unique ID
-            const newHistoryDoc = userDocRef.collection('history').doc(historyDocId);
-            await newHistoryDoc.set(combinedData);
-
-            logger.info(`Data transferred and deleted successfully for user ${userId}.`);
         }
     } catch (e) {
         logger.error('Error in transferAndDeleteWeeklyData:', e);
     }
 }
+
 
 // Scheduled function to send Monday morning notification to all users and transfer data
 exports.sendMondayNotification = onSchedule({
