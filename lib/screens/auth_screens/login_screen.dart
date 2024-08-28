@@ -12,6 +12,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.put(AuthController());
     return Scaffold(
+      // backgroundColor: AppColor().appTextColor,
       body: Stack(
         children: [
           SingleChildScrollView(

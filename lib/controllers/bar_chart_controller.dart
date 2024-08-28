@@ -1,10 +1,10 @@
-
 import 'package:trucker_edge/services/firebase_bar_chart_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../model/profit_bar_chart_model.dart';
+
 class BarChartController extends GetxController {
-  var barData = <BarData>[].obs;
+  var barData = <BarData3>[].obs;
 
   var selectedDateRange = Rx<DateTimeRange?>(null);
   var isLoading = false.obs;
@@ -34,14 +34,12 @@ class BarChartController extends GetxController {
             if (value is Map<String, dynamic> &&
                 value.containsKey('totalProfit')) {
               totalProfit += value['totalProfit'];
-            } else {
-            }
+            } else {}
           }
           for (var value in calculatedValues) {
             if (value is Map<String, dynamic> &&
                 value.containsKey('totalDispatchedMiles')) {
-            } else {
-            }
+            } else {}
           }
 
           String timestamp = data.containsKey('transferTimestamp')
@@ -51,7 +49,7 @@ class BarChartController extends GetxController {
               ? data['transferTimestamp']
               : 'Unknown Date';
           timestamp = timestamp2;
-          barData.add(BarData(
+          barData.add(BarData3(
             value2: 0,
             label: timestamp,
             value: totalProfit,

@@ -20,6 +20,7 @@ class CardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
+        color: AppColor().appTextColor,
         shape: RoundedRectangleBorder(
           side: BorderSide(color: AppColor().secondaryAppColor),
           borderRadius: BorderRadius.circular(

@@ -3,6 +3,7 @@ import 'package:trucker_edge/constants/fonts_strings.dart';
 import 'package:trucker_edge/constants/image_strings.dart';
 import 'package:trucker_edge/controllers/auth_controller.dart';
 import 'package:trucker_edge/controllers/home_controller.dart';
+
 import 'package:trucker_edge/screens/history_screen/history_screen.dart';
 import 'package:trucker_edge/screens/history_screen/tutorial_screen.dart';
 import 'package:trucker_edge/screens/home_screens/home_screen.dart';
@@ -11,6 +12,7 @@ import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 import '../screens/charts_screen/analytics_screen.dart';
+import '../screens/charts_screen/chart_screen.dart';
 
 class MyDrawerWidget extends StatelessWidget {
   MyDrawerWidget({super.key});
@@ -95,7 +97,7 @@ class MyDrawerWidget extends StatelessWidget {
                           fontFamily: robotoRegular,
                           color: AppColor().primaryAppColor)),
                   onTap: () {
-                    Get.off(() => CombinedAnalyticsScreen());
+                    Get.off(() => ChartScreen());
                     Get.back();
                   },
                 ),

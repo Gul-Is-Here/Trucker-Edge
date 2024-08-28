@@ -10,6 +10,7 @@ class RegisterScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     AuthController authController = Get.put(AuthController());
     return Scaffold(
+      backgroundColor: AppColor().appTextColor,
       body: Stack(
         children: [
           SingleChildScrollView(

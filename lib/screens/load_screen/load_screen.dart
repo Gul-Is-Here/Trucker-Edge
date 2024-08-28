@@ -135,6 +135,7 @@ class _LoadScreenState extends State<LoadScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Card(
+                                color: AppColor().appTextColor,
                                 elevation: 5,
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.end,
