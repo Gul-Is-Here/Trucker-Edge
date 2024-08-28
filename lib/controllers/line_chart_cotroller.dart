@@ -1,10 +1,11 @@
-import 'package:trucker_edge/services/firebase_bar_chart_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../model/line_graph_model.dart';
+import '../services/firebase_bar_chart_services.dart';
 
 class LineCartController extends GetxController {
-  var myLineChart = <MyLineChart2>[].obs;
+  var myLineChart = <LineChartDataModel>[].obs;
   var selectedDateRange = Rx<DateTimeRange?>(null);
   var isLoading = false.obs;
 
@@ -16,7 +17,6 @@ class LineCartController extends GetxController {
 
   Future<void> fetchLineChart({DateTime? startDate, DateTime? endDate}) async {
     isLoading.value = true;
-
     try {
       final List<Map<String, dynamic>> rawData =
           await FirebaseBarChartServices()
@@ -46,7 +46,7 @@ class LineCartController extends GetxController {
 
           print('timestamp line Chart $timestamp2');
           myLineChart.add(
-            MyLineChart2(
+            LineChartDataModel(
               timestamp2,
               totalDispatchedMiles,
             ),

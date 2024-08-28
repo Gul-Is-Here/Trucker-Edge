@@ -14,7 +14,7 @@ class FirebaseServices {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
   String docId = '';
-
+  var entries = <Map<String, dynamic>>[].obs;
   Future<void> storeTruckMonthlyPayments({
     required bool isEditableTruckPayment,
     required double tWeeklyTruckPayment,
@@ -699,5 +699,11 @@ class FirebaseServices {
     saveUserToken();
     // Set up listener to handle token refresh
     setupTokenRefreshListener();
+  }
+
+  // Fetch data method
+  Future<void> fetchEntries() async {
+    var data = await FirebaseServices().fetchAllEntriesForEditing();
+    entries.value = data;
   }
 }

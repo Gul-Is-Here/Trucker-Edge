@@ -56,8 +56,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-
-
 Future<void> transferAndDeleteWeeklyData() async {
   try {
     await Firebase.initializeApp();
@@ -76,6 +74,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Dispatched Calculator',
       theme: ThemeData(
+        scaffoldBackgroundColor: AppColor().appTextColor,
         appBarTheme: AppBarTheme(
           color: AppColor().primaryAppColor,
           iconTheme: AppColor().appDrawerColor,

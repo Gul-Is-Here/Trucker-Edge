@@ -3,7 +3,7 @@ import 'package:trucker_edge/services/firebase_bar_chart_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 class FreightLineController extends GetxController {
-  var myFreightLineChart = <MyLineChart>[].obs;
+  var myFreightLineChart = <MyLineChart2>[].obs;
   var selectedDateRange = Rx<DateTimeRange?>(null);
   var isLoading = false.obs;
 
@@ -46,7 +46,7 @@ class FreightLineController extends GetxController {
 
           print('timestamp line Chart $timestamp2');
           myFreightLineChart.add(
-            MyLineChart(
+            MyLineChart2(
               timestamp2,
               totalDispatchedMiles,
             ),
