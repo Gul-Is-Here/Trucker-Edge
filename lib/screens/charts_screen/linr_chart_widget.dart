@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:trucker_edge/constants/colors.dart';
+import '../../constants/fonts_strings.dart';
 import '../../model/line_graph_model.dart'; // Ensure this is the updated model name
 
 class MyLineChartWidget extends StatelessWidget {
@@ -61,7 +62,7 @@ class MyLineChartWidget extends StatelessWidget {
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 60,
+                            reservedSize: 40,
                             interval: 1,
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
@@ -73,17 +74,17 @@ class MyLineChartWidget extends StatelessWidget {
                                       '$dateString ${DateTime.now().year}';
                                   final formattedDate = DateFormat("d MMM yyyy")
                                       .parse(fullDateString);
-                                  final displayDate =
-                                      DateFormat("d/M").format(formattedDate);
+                                  final displayDate = DateFormat("d-MM-yyyy")
+                                      .format(formattedDate);
 
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
                                       displayDate,
                                       style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                          color: Colors.black,
+                                          fontSize: 9,
+                                          fontFamily: robotoRegular),
                                     ),
                                   );
                                 } catch (e) {
@@ -98,19 +99,28 @@ class MyLineChartWidget extends StatelessWidget {
                         ),
                         leftTitles: AxisTitles(
                           axisNameSize: 30,
-                          axisNameWidget: Text('Total Freight Charges (\$)'),
+                          axisNameWidget: Text('Total Dispatched Miles'),
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 60,
+                            reservedSize: 25,
                             getTitlesWidget: (value, meta) {
+                              // Convert the value to a 1K format
+                              String formattedValue;
+                              if (value >= 1000) {
+                                formattedValue =
+                                    '${(value / 1000).toStringAsFixed(0)}K';
+                              } else {
+                                formattedValue = value.toInt().toString();
+                              }
+
                               return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Text(
-                                  '${value.toInt()}',
+                                  formattedValue,
                                   style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                      fontSize: 9,
+                                      color: Colors.black,
+                                      fontFamily: robotoRegular),
                                 ),
                               );
                             },
@@ -123,13 +133,13 @@ class MyLineChartWidget extends StatelessWidget {
                         ),
                         topTitles: AxisTitles(
                           axisNameWidget: Text(
-                            'Total Dispatched Miles',
+                            '',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          axisNameSize: 40,
+                          axisNameSize: 60,
                           sideTitles: SideTitles(
                             showTitles: false,
                           ),
@@ -167,7 +177,7 @@ class MyLineChartWidget extends StatelessWidget {
                               final date = data.date;
                               final value = spot.y;
                               return LineTooltipItem(
-                                '$date\n\$${value.toStringAsFixed(2)}',
+                                '$date\n${value.toStringAsFixed(0)}',
                                 const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,

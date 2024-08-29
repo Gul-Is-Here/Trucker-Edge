@@ -5,8 +5,7 @@ import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/constants/fonts_strings.dart';
 import 'package:trucker_edge/controllers/bar_chart_controller.dart';
 import 'package:trucker_edge/model/profit_bar_chart_model.dart';
-import 'package:trucker_edge/screens/charts_screen/chart_screen.dart';
-import 'package:trucker_edge/widgets/my_drawer_widget.dart';
+import 'package:intl/intl.dart';
 
 class MyBarGraph extends StatelessWidget {
   final List<BarData3> barDataList;
@@ -16,6 +15,7 @@ class MyBarGraph extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final BarChartController barChartController = Get.put(BarChartController());
+
     // Filter to show only the most recent 4 data points
     final dataToDisplay = barDataList.isNotEmpty
         ? barDataList.toList()
@@ -28,6 +28,11 @@ class MyBarGraph extends StatelessWidget {
             ),
           );
 
+    // Find the maximum value in the dataset for scaling
+    final double maxY = dataToDisplay
+        .map((data) => data.value ?? 0)
+        .reduce((a, b) => a > b ? a : b);
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Card(
@@ -38,32 +43,31 @@ class MyBarGraph extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: LayoutBuilder(
-                  builder: (context, raints) {
-                    // Calculate the height and width dynamically based on raints
-                    final availableHeight = raints.maxHeight;
-                    final availableWidth = raints.maxWidth;
-                    final numberOfBars = dataToDisplay.length;
-                    final barWidth = availableWidth / 6; // Width per bar
-                    final chartWidth =
-                        barWidth * numberOfBars * 2; // Total chart width
+              child: LayoutBuilder(
+                builder: (context, raints) {
+                  // Calculate the height and width dynamically based on constraints
+                  final availableHeight = raints.maxHeight;
+                  final availableWidth = raints.maxWidth;
+                  final numberOfBars = dataToDisplay.length;
+                  final barWidth = availableWidth / 6; // Width per bar
+                  final chartWidth =
+                      barWidth * numberOfBars * 2; // Total chart width
 
-                    return SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: SizedBox(
-                        height:
-                            availableHeight * 0.4, // 60% of available height
-                        width: chartWidth < availableWidth
-                            ? availableWidth * 0.8
-                            : chartWidth, // Use available width or allow scrolling
-                        child: BarChart(BarChartData(
+                  return SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: SizedBox(
+                      height: availableHeight * 0.4, // 40% of available height
+                      width: chartWidth < availableWidth
+                          ? availableWidth * 0.8
+                          : chartWidth, // Use available width or allow scrolling
+                      child: BarChart(
+                        BarChartData(
+                          maxY: maxY, // Set maxY based on your data
+                          minY: 0,
                           gridData: FlGridData(
-                            verticalInterval: 2000,
-                            show: false,
+                            show: true,
                             drawVerticalLine: false,
-                            horizontalInterval: 20000,
+                            horizontalInterval: maxY / 5, // Dynamic interval
                             getDrawingHorizontalLine: (value) {
                               return FlLine(
                                 color: Color.fromARGB(255, 224, 224, 224),
@@ -71,8 +75,6 @@ class MyBarGraph extends StatelessWidget {
                               );
                             },
                           ),
-                          maxY: 100000,
-                          minY: 0,
                           borderData: FlBorderData(
                             show: true,
                             border: Border.all(
@@ -84,15 +86,10 @@ class MyBarGraph extends StatelessWidget {
                             show: true,
                             topTitles: AxisTitles(
                                 axisNameSize: 30,
-                                axisNameWidget: Text(
-                                  'Profit/Loss Chart',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: robotoRegular,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                sideTitles: SideTitles(showTitles: false)),
+                                axisNameWidget: Text(''),
+                                sideTitles: SideTitles(
+                                  showTitles: false,
+                                )),
                             leftTitles: AxisTitles(
                               axisNameWidget: Text(
                                 'Profit/Loss Chart (\$)',
@@ -104,11 +101,26 @@ class MyBarGraph extends StatelessWidget {
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 reservedSize:
-                                    availableWidth * 0.15, // 15% of width
+                                    availableWidth * 0.08, // 15% of width
                                 getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    '${value.toInt()}',
-                                    style: TextStyle(color: Colors.black),
+                                  // Convert the value to a 1K format
+                                  String formattedValue;
+                                  if (value >= 1000) {
+                                    formattedValue =
+                                        '${(value / 1000).toStringAsFixed(0)}K';
+                                  } else {
+                                    formattedValue = value.toInt().toString();
+                                  }
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: Text(
+                                      formattedValue,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 9,
+                                          fontFamily: robotoRegular),
+                                    ),
                                   );
                                 },
                               ),
@@ -116,12 +128,31 @@ class MyBarGraph extends StatelessWidget {
                             rightTitles: const AxisTitles(
                                 sideTitles: SideTitles(showTitles: false)),
                             bottomTitles: AxisTitles(
+                              axisNameSize: 10,
+                              axisNameWidget: Text(''),
                               sideTitles: SideTitles(
                                 showTitles: true,
                                 getTitlesWidget: (value, meta) {
-                                  return Text(
-                                    dataToDisplay[value.toInt()].label,
-                                    style: TextStyle(color: Colors.black),
+                                  // Assuming 'label' in BarData3 is in a parseable date format (e.g., "2024-08-28")
+                                  String dateString =
+                                      dataToDisplay[value.toInt()].label;
+
+                                  final fullDateString =
+                                      '$dateString ${DateTime.now().year}';
+                                  final formattedDate = DateFormat("d MMM yyyy")
+                                      .parse(fullDateString);
+                                  final displayDate = DateFormat("d-MM-yyyy")
+                                      .format(formattedDate);
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Text(
+                                      displayDate,
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontFamily: robotoRegular,
+                                        color: Colors.black,
+                                      ),
+                                    ),
                                   );
                                 },
                               ),
@@ -138,29 +169,20 @@ class MyBarGraph extends StatelessWidget {
                                   borderSide: BorderSide(
                                       color: AppColor().secondaryAppColor,
                                       width: 2),
-                                  toY: data.value ?? 0,
+                                  toY: data.value ?? 0, // Height of the bar
                                   width:
                                       barWidth * 0.2, // Half of the bar width
                                   borderRadius: BorderRadius.circular(4),
                                   color: const Color(0xFF114D84),
-                                  backDrawRodData: BackgroundBarChartRodData(
-                                    gradient: LinearGradient(colors: [
-                                      Color(0xFF505250),
-                                      Color(0xFFCBD3C1),
-                                    ]),
-                                    show: true,
-                                    toY: 100000,
-                                    color: Colors.grey.shade200,
-                                  ),
                                 ),
                               ],
                             );
                           }).toList(),
-                        )),
+                        ),
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ),
           ],

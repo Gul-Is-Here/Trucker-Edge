@@ -4,6 +4,7 @@ import 'package:trucker_edge/controllers/bar_chart_controller.dart';
 import 'package:trucker_edge/controllers/line_chart_cotroller.dart'; // Corrected import
 import 'package:trucker_edge/controllers/freight_controller.dart';
 import 'package:trucker_edge/widgets/my_drawer_widget.dart';
+import '../../constants/fonts_strings.dart';
 import 'bar_graphs.dart';
 import 'freight_chart_widget.dart';
 import 'linr_chart_widget.dart'; // Update with correct name
@@ -27,7 +28,17 @@ class ChartScreen extends StatelessWidget {
         // Added SingleChildScrollView
         child: Column(
           children: [
-            // First Graph with Title
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Profit/Loss Chart',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: robotoRegular,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             SizedBox(
               height: 300, // Adjust height as needed
               child: Column(
@@ -48,7 +59,17 @@ class ChartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Second Graph with Title
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Total Dispatched Miles',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontFamily: robotoRegular,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             SizedBox(
               height: 300, // Adjust height as needed
               child: Column(
@@ -69,7 +90,16 @@ class ChartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            // Third Graph with Title
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Total Freight Charges',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             SizedBox(
               height: 300, // Adjust height as needed
               child: Column(

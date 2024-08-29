@@ -64,7 +64,7 @@ class FreightLineChartWidget extends StatelessWidget {
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 60,
+                            reservedSize: 40,
                             interval: 1,
                             getTitlesWidget: (value, meta) {
                               final index = value.toInt();
@@ -76,17 +76,17 @@ class FreightLineChartWidget extends StatelessWidget {
                                       '$dateString ${DateTime.now().year}';
                                   final formattedDate = DateFormat("d MMM yyyy")
                                       .parse(fullDateString);
-                                  final displayDate =
-                                      DateFormat("d/M").format(formattedDate);
+                                  final displayDate = DateFormat("d-MM-yyyy")
+                                      .format(formattedDate);
 
                                   return Padding(
                                     padding: const EdgeInsets.only(top: 8.0),
                                     child: Text(
                                       displayDate,
                                       style: const TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                          color: Colors.black,
+                                          fontSize: 9,
+                                          fontFamily: robotoRegular),
                                     ),
                                   );
                                 } catch (e) {
@@ -102,21 +102,30 @@ class FreightLineChartWidget extends StatelessWidget {
                         leftTitles: AxisTitles(
                           axisNameSize: 30,
                           axisNameWidget: Text(
-                            'Total Dispatched Miles',
+                            'Total Freight Charges (\$)',
                             style: TextStyle(fontFamily: robotoRegular),
                           ),
                           sideTitles: SideTitles(
                             showTitles: true,
-                            reservedSize: 60,
+                            reservedSize: 25,
                             getTitlesWidget: (value, meta) {
+                              // Convert the value to a 1K format
+                              String formattedValue;
+                              if (value >= 1000) {
+                                formattedValue =
+                                    '${(value / 1000).toStringAsFixed(0)}K';
+                              } else {
+                                formattedValue = value.toInt().toString();
+                              }
+
                               return Padding(
                                 padding: const EdgeInsets.only(right: 8.0),
                                 child: Text(
-                                  '${value.toInt()}',
+                                  formattedValue,
                                   style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                      color: Colors.black,
+                                      fontSize: 9,
+                                      fontFamily: robotoRegular),
                                 ),
                               );
                             },
@@ -129,13 +138,13 @@ class FreightLineChartWidget extends StatelessWidget {
                         ),
                         topTitles: AxisTitles(
                           axisNameWidget: Text(
-                            'Total Freight Charges',
+                            '',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          axisNameSize: 30,
+                          axisNameSize: 60,
                           sideTitles: SideTitles(
                             showTitles: false,
                           ),
