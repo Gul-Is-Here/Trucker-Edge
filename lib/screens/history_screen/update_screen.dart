@@ -24,6 +24,15 @@ class UpdateScreen extends StatefulWidget {
 class _UpdateScreenState extends State<UpdateScreen> {
   final ScrollController _scrollController = ScrollController();
 
+  // Add a key to refresh the state when the data changes
+  late Future<List<Map<String, dynamic>>> _futureData;
+
+  @override
+  void initState() {
+    super.initState();
+    _futureData = FirebaseServices().fetchAllEntriesForEditing();
+  }
+
   @override
   void dispose() {
     _scrollController.dispose();
@@ -32,14 +41,13 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    FirebaseServices().fetchAllEntriesForEditing();
     return Scaffold(
       drawer: MyDrawerWidget(),
       appBar: AppBar(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: FutureBuilder<List<Map<String, dynamic>>>(
-          future: FirebaseServices().fetchAllEntriesForEditing(),
+          future: _futureData,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
@@ -54,7 +62,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
             var data = snapshot.data ?? [];
             if (data.isEmpty) {
-              return const Center(child: Text('No update data available.'));
+              return const Center(child: Text('Please Add loads'));
             }
 
             return Scrollbar(
@@ -143,12 +151,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                 },
                                 child: const Text('Edit'),
                               ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    FirebaseServices()
-                                        .transferAndDeleteWeeklyData();
-                                  },
-                                  child: Text('Delete'))
+                              // Remove the delete button
                             ],
                           ),
                         ),
