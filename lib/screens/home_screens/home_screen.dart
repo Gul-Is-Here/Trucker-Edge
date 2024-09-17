@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
             actions: <Widget>[
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text('No', style: TextStyle(fontFamily: robotoRegular)),
+                child: const Text('No', style: TextStyle(fontFamily: robotoRegular)),
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
@@ -118,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           foregroundColor: Colors.white),
                       key: truckPaymentButtonKey,
                       onPressed: () async {
-                        final result = await Get.to(() => CalculatorScreen());
+                        final result = await Get.to(() => const CalculatorScreen());
                         if (result == true) {
                           homeController.fetchTruckPaymentIntialValues();
                         }
