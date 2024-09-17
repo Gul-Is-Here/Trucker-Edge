@@ -5,7 +5,6 @@ import 'package:app_settings/app_settings.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:firebase_firestore/firebase_firestore.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -14,7 +13,6 @@ class NotificationServices {
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Singleton pattern to ensure only one instance exists
   static final NotificationServices _instance =
       NotificationServices._internal();
 
@@ -24,7 +22,6 @@ class NotificationServices {
 
   NotificationServices._internal();
 
-  // Initialize notifications
   Future<void> initializeNotification() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -38,18 +35,33 @@ class NotificationServices {
             android: initializationSettingsAndroid,
             iOS: initializationSettingsDarwin);
 
-    await _flutterLocalNotificationPlugin.initialize(initializationSettings,
-        onDidReceiveNotificationResponse: (NotificationResponse response) {
-      // Handle notification click here
-      print("Notification Clicked: ${response.payload}");
-      // You can navigate to a specific screen or perform an action
+    await _flutterLocalNotificationPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        // Handle notification click here
+        String? payload = response.payload;
+        if (payload != null && payload.isNotEmpty) {
+          // Handle navigation or specific action based on payload
+          print("Notification Clicked with Payload: $payload");
+          // Example: Navigate to a specific screen based on payload
+          // Navigator.of(context).pushNamed(payload);
+        }
+      },
+    ).catchError((error) {
+      print("Error initializing notifications: $error");
     });
+
+    // iOS foreground notification settings
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
-  // Handle local notification received on iOS (iOS 10+)
   static Future<void> onDidReceiveLocalNotification(
       int id, String? title, String? body, String? payload) async {
-    // You can add logic here to show a dialog or perform any other action
     print("iOS Local Notification Received: $title");
   }
 
@@ -70,38 +82,43 @@ class NotificationServices {
         AuthorizationStatus.provisional) {
       print('User granted provisional permission');
     } else {
-      AppSettings
-          .openAppSettings(); // Ask the user to manually enable notifications
+      AppSettings.openAppSettings();
     }
   }
 
   Future<String> getDeviceToken() async {
     String? token = await messaging.getToken();
-    print("Device Token: $token");
-    return token!;
+    if (token != null) {
+      print("Device Token: $token");
+      return token;
+    } else {
+      print("Failed to retrieve device token.");
+      return '';
+    }
   }
 
   void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
-      // Foreground notification
       print("Received a foreground message: ${message.messageId}");
       showNotification(message);
+    }).onError((error) {
+      print("Error receiving foreground message: $error");
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      // Handle notification when the app is opened from a terminated or background state
       print("Notification Clicked: ${message.messageId}");
-      // Navigate to specific screen based on the notification
+      // Handle navigation to specific screen here if necessary
+    }).onError((error) {
+      print("Error handling notification click: $error");
     });
 
     FirebaseMessaging.onBackgroundMessage(firebaseBackgroundMessageHandler);
 
-    // Set up token refresh listener
     setupTokenRefreshListener();
   }
 
   Future<void> showNotification(RemoteMessage message) async {
-    AndroidNotificationChannel channel = AndroidNotificationChannel(
+    AndroidNotificationChannel channel = const AndroidNotificationChannel(
         'high_importance_channel', 'High Importance Notifications',
         description: 'This channel is used for important notifications.',
         importance: Importance.max);
@@ -121,39 +138,43 @@ class NotificationServices {
       iOS: const DarwinNotificationDetails(),
     );
 
-    await _flutterLocalNotificationPlugin.show(
-      Random().nextInt(1000),
+    await _flutterLocalNotificationPlugin
+        .show(
+      DateTime.now().millisecondsSinceEpoch,
       message.notification?.title ?? 'No Title',
       message.notification?.body ?? 'No Body',
       notificationDetails,
-      payload: message.data['payload'], // Use this to pass additional data
-    );
+      payload: message.data['payload'],
+    )
+        .catchError((error) {
+      print("Error showing notification: $error");
+    });
   }
 
   Future<void> showLocalNotification(String title, String body) async {
-    AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-            Random().nextInt(1000) as String, // Ensure the ID is unique
-            'Channel Name',
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails('custom_channel_id', 'Channel Name',
             channelDescription: 'Channel Description',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');
-    NotificationDetails platformChannelSpecifics = NotificationDetails(
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
       android: androidPlatformChannelSpecifics,
-      iOS: const DarwinNotificationDetails(),
+      iOS: DarwinNotificationDetails(),
     );
-    await _flutterLocalNotificationPlugin.show(
-        Random().nextInt(1000), title, body, platformChannelSpecifics,
-        payload: 'Trucker');
+    await _flutterLocalNotificationPlugin
+        .show(Random().nextInt(1000), title, body, platformChannelSpecifics,
+            payload: 'Trucker')
+        .catchError((error) {
+      print("Error showing local notification: $error");
+    });
   }
 
   void setupTokenRefreshListener() {
     FirebaseMessaging.instance.onTokenRefresh.listen((String newToken) async {
       User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
+      if (user != null && newToken.isNotEmpty) {
         try {
-          // Update the device token in Firestore, replacing the previous token
           await FirebaseFirestore.instance
               .collection('users')
               .doc(user.uid)

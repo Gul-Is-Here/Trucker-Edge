@@ -69,7 +69,7 @@ class MyBarGraph extends StatelessWidget {
                             drawVerticalLine: false,
                             horizontalInterval: maxY / 5, // Dynamic interval
                             getDrawingHorizontalLine: (value) {
-                              return FlLine(
+                              return const FlLine(
                                 color: Color.fromARGB(255, 224, 224, 224),
                                 strokeWidth: 1,
                               );
@@ -84,14 +84,14 @@ class MyBarGraph extends StatelessWidget {
                           ),
                           titlesData: FlTitlesData(
                             show: true,
-                            topTitles: AxisTitles(
+                            topTitles: const AxisTitles(
                                 axisNameSize: 30,
                                 axisNameWidget: Text(''),
                                 sideTitles: SideTitles(
                                   showTitles: false,
                                 )),
                             leftTitles: AxisTitles(
-                              axisNameWidget: Text(
+                              axisNameWidget: const Text(
                                 'Profit/Loss Chart (\$)',
                                 style: TextStyle(
                                   fontFamily: robotoRegular,

@@ -545,7 +545,8 @@ class FirebaseServices {
   Future<void> transferAndDeleteWeeklyData() async {
     print('transferAndDeleteWeeklyData triggered');
 
-    await Firebase.initializeApp();
+    // No need to initialize Firebase here if it's already initialized in the main function
+
     User? user = FirebaseAuth.instance.currentUser;
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -569,9 +570,8 @@ class FirebaseServices {
         // Query documents in the calculatedValues subcollection within the current week
         QuerySnapshot calculatedValuesSnapshot = await userDocRef
             .collection('calculatedValues')
-            .where('timestamp',
-                isGreaterThanOrEqualTo: startOfWeek,
-                isLessThanOrEqualTo: endOfWeek)
+            .where('timestamp', isGreaterThanOrEqualTo: startOfWeek)
+            .where('timestamp', isLessThanOrEqualTo: endOfWeek)
             .get();
 
         // Query the mileage fee collection
@@ -588,19 +588,12 @@ class FirebaseServices {
           'mileageFee': [],
           'truckPayment': [],
           'transferTimestamp': AppClass().formatDateSpecific(
-              DateTime.now()) // Add a timestamp for when the transfer happens
+              DateTime.now()), // Add a timestamp for when the transfer happens
         };
 
         // Add calculated values data
         for (QueryDocumentSnapshot doc in calculatedValuesSnapshot.docs) {
           combinedData['calculatedValues'].add(doc.data());
-          // Attempt to delete the document from the calculatedValues collection
-          try {
-            await doc.reference.delete();
-            print('Document ${doc.id} deleted successfully.');
-          } catch (e) {
-            print('Error deleting document ${doc.id}: $e');
-          }
         }
 
         // Add mileage fee data without deleting
@@ -619,6 +612,16 @@ class FirebaseServices {
         DocumentReference newHistoryDoc =
             userDocRef.collection('history').doc(historyDocId);
         await newHistoryDoc.set(combinedData);
+
+        // After successfully transferring the data, delete the documents from calculatedValues
+        for (QueryDocumentSnapshot doc in calculatedValuesSnapshot.docs) {
+          try {
+            await doc.reference.delete();
+            print('Document ${doc.id} deleted successfully.');
+          } catch (e) {
+            print('Error deleting document ${doc.id}: $e');
+          }
+        }
 
         print('Data transferred and deleted successfully.');
       } catch (e) {

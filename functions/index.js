@@ -11,10 +11,16 @@ const logger = require("firebase-functions/logger");
 // Function to send notifications to all users or a specific topic
 async function sendNotification(title, body, topicName = null) {
     try {
+        // Ensure title and body are not empty
+        if (!title || !body) {
+            logger.warn("Notification title or body is empty. Notification not sent.");
+            return; // Exit the function early
+        }
+
         if (topicName) {
             // If a topic name is provided, send to all users subscribed to this topic
             const message = {
-                notification: { title: title, body: body },
+                notification: { title, body },
                 topic: topicName
             };
             await admin.messaging().send(message);
@@ -32,7 +38,7 @@ async function sendNotification(title, body, topicName = null) {
 
             if (tokens.length > 0) {
                 const message = {
-                    notification: { title: title, body: body },
+                    notification: { title, body },
                     tokens: tokens // List of device tokens
                 };
 
@@ -50,7 +56,6 @@ async function sendNotification(title, body, topicName = null) {
 // Function to transfer and delete weekly data
 async function transferAndDeleteWeeklyData() {
     try {
-        // Calculate the start and end dates of the current week
         const now = new Date();
         const startOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 1)); // Monday as start
         const endOfWeek = new Date(now.setDate(now.getDate() - now.getDay() + 7)); // Sunday as end
@@ -58,61 +63,58 @@ async function transferAndDeleteWeeklyData() {
         logger.info(`Start of Week: ${startOfWeek}`);
         logger.info(`End of Week: ${endOfWeek}`);
 
-        // Query documents in the calculatedValues subcollection within the current week
         const usersSnapshot = await admin.firestore().collection('users').get();
 
         for (const userDoc of usersSnapshot.docs) {
             const userId = userDoc.id;
             const userDocRef = admin.firestore().collection('users').doc(userId);
 
-            // Fetch the single document for the current week
+            // Get all the calculated values for the week
             const calculatedValuesSnapshot = await userDocRef.collection('calculatedValues')
                 .where('timestamp', '>=', startOfWeek)
                 .where('timestamp', '<=', endOfWeek)
-                .limit(1) // There should be only one document
                 .get();
 
             if (!calculatedValuesSnapshot.empty) {
-                const doc = calculatedValuesSnapshot.docs[0];
-
-                // Prepare data to be transferred
-                const combinedData = {
-                    calculatedValues: doc.data(),
+                let combinedData = {
+                    calculatedValues: [],
                     mileageFee: [],
                     truckPayment: [],
-                    transferTimestamp: new Date().toISOString() // Add a timestamp for when the transfer happens
+                    transferTimestamp: new Date().toISOString() 
                 };
 
-                // Fetch related data without deleting it
-                const mileageFeeSnapshot = await userDocRef.collection('perMileageCost').get();
-                const truckPaymentSnapshot = await userDocRef.collection('truckPaymentCollection').get();
+                // Collect all calculated values documents
+                for (const doc of calculatedValuesSnapshot.docs) {
+                    combinedData.calculatedValues.push(doc.data());
+                    try {
+                        // Delete the document after transferring
+                        await doc.ref.delete();
+                        logger.info(`Calculated Values Document ${doc.id} deleted successfully.`);
+                    } catch (e) {
+                        logger.error(`Error deleting document ${doc.id}: ${e}`);
+                    }
+                }
 
-                // Add mileage fee data
+                // Collect all mileage fees for the user
+                const mileageFeeSnapshot = await userDocRef.collection('perMileageCost').get();
                 for (const mileageDoc of mileageFeeSnapshot.docs) {
                     combinedData.mileageFee.push(mileageDoc.data());
                 }
 
-                // Add truck payment data
+                // Collect all truck payments for the user
+                const truckPaymentSnapshot = await userDocRef.collection('truckPaymentCollection').get();
                 for (const truckDoc of truckPaymentSnapshot.docs) {
                     combinedData.truckPayment.push(truckDoc.data());
                 }
 
-                // Set a new document in the history collection with a unique ID
-                const historyDocId = admin.firestore().collection('users').doc().id; // Generate a unique ID
+                // Save the combined data to the 'history' collection
+                const historyDocId = admin.firestore().collection('users').doc().id;
                 const newHistoryDoc = userDocRef.collection('history').doc(historyDocId);
                 await newHistoryDoc.set(combinedData);
 
-                // Delete the transferred document
-                try {
-                    await doc.ref.delete();
-                    logger.info(`Document ${doc.id} deleted successfully.`);
-                } catch (e) {
-                    logger.error(`Error deleting document ${doc.id}: ${e}`);
-                }
-
                 logger.info(`Data transferred and deleted successfully for user ${userId}.`);
             } else {
-                logger.info(`No documents found for user ${userId} in the current week.`);
+                logger.info(`No calculated values found for user ${userId} in the current week.`);
             }
         }
     } catch (e) {
@@ -120,45 +122,47 @@ async function transferAndDeleteWeeklyData() {
     }
 }
 
-
 // Scheduled function to send Monday morning notification to all users and transfer data
 exports.sendMondayNotification = onSchedule({
     schedule: 'every monday 06:00',
     timeZone: 'America/Chicago',
     options: {
-        cpu: 1, // 1 CPU core
-        memory: '512MiB', // 512 MiB of memory
+        cpu: 1, 
+        memory: '512MiB', 
     }
 }, async (context) => {
+    // Send notification and transfer data
     await sendNotification("Your new week starts!", "It's Monday morning. Get ready to add your loads.", 'loads');
-    await transferAndDeleteWeeklyData(); // Use the weekly transfer function
+    await transferAndDeleteWeeklyData();
 });
 
-// Scheduled function to send reminder notifications on Friday and transfer data
+// Scheduled function to send reminder notifications on Friday
 exports.remindToAddLoadFriday = onSchedule({
     schedule: 'every friday 06:00',
     timeZone: 'America/Chicago',
     options: {
-        cpu: 1, // 1 CPU core
-        memory: '512MiB', // 512 MiB of memory
+        cpu: 1, 
+        memory: '512MiB', 
     }
 }, async (context) => {
+    // Send reminder notification
     await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", 'loads');
 });
 
-// Scheduled function to send "Hurry up to add loads" notification on Sunday, and transfer data
+// Scheduled function to send "Hurry up to add loads" notification on Sunday
 exports.sendSundayNotification = onSchedule({
     schedule: 'every sunday 06:00',
     timeZone: 'America/Chicago',
     options: {
-        cpu: 1, // 1 CPU core
-        memory: '512MiB', // 512 MiB of memory
+        cpu: 1, 
+        memory: '512MiB', 
     }
 }, async (context) => {
+    // Send hurry up notification
     await sendNotification("Hurry up to add loads!", "Hurry up! Your loads will be transferred soon.", 'loads');
 });
 
-// Example HTTP function (can be used for testing)
+// Example HTTP function (for testing purposes)
 exports.helloWorld = onRequest((request, response) => {
     logger.info("Hello logs!", { structuredData: true });
     response.send("Hello from Firebase!");
