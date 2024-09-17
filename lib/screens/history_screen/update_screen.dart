@@ -151,19 +151,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                 },
                                 child: const Text('Edit'),
                               ),
-                              ElevatedButton(
-                                  onPressed: () {
-                                    FirebaseServices()
-                                        .transferAndDeleteWeeklyData()
-                                        .then((_) {
-                                      // Refresh the data after deletion
-                                      setState(() {
-                                        _futureData = FirebaseServices()
-                                            .fetchAllEntriesForEditing();
-                                      });
-                                    });
-                                  },
-                                  child: Text('Delete'))
+                              // Remove the delete button
                             ],
                           ),
                         ),
