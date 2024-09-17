@@ -1,5 +1,7 @@
-// ignore_for_file: library_private_types_in_public_api
-
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:trucker_edge/app_classes/app_class.dart';
 import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/constants/fonts_strings.dart';
@@ -9,11 +11,6 @@ import 'package:trucker_edge/screens/load_screen/load_screen.dart';
 import 'package:trucker_edge/screens/load_screen/mileage_fee_section.dart';
 import 'package:trucker_edge/widgets/card_widget.dart';
 import 'package:trucker_edge/widgets/my_drawer_widget.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import '../../services/firebase_services.dart';
 import '../calculator_screen/calculator_screen.dart';
 
@@ -26,10 +23,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController homeController = Get.put(HomeController());
-  late BannerAd bannerAd;
-  bool isAdloaded = false;
-  var addUit = 'ca-app-pub-3940256099942544/9214589741';
-
   final GlobalKey mileageButtonKey = GlobalKey();
   final GlobalKey truckPaymentButtonKey = GlobalKey();
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -44,12 +37,28 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseServices().fetchIsEditabbleTruckPayment();
   }
 
-  toggleDrawer() async {
-    if (_scaffoldKey.currentState!.isDrawerOpen) {
-      _scaffoldKey.currentState!.openDrawer();
-    } else {
-      _scaffoldKey.currentState!.openEndDrawer();
-    }
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: const Text('Confirm',
+                style: TextStyle(fontFamily: robotoRegular)),
+            content: const Text(
+                'Are you sure you want to exit the application?',
+                style: TextStyle(fontFamily: robotoRegular)),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text('No', style: TextStyle(fontFamily: robotoRegular)),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(true),
+                child: const Text('Yes'),
+              ),
+            ],
+          ),
+        )) ??
+        false;
   }
 
   @override
@@ -62,128 +71,132 @@ class _HomeScreenState extends State<HomeScreen> {
         await prefs.setBool('isFirstLogin', false);
       }
     });
-    return Scaffold(
-      drawer: MyDrawerWidget(),
-      appBar: AppBar(),
-      body: SafeArea(
-        child: Obx(() {
-          return Column(
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  AppClass().getGreeting(),
-                  style: const TextStyle(
-                    fontFamily: robotoRegular,
-                    fontSize: 25,
-                    // fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor().secondaryAppColor,
-                        foregroundColor: Colors.white),
-                    key: mileageButtonKey,
-                    onPressed: () async {
-                      final result = await Get.to(() => MileageFeSection(
-                            homeController: homeController,
-                            isUpdate: true,
-                          ));
-                      if (result == true) {
-                        homeController.fetchMileageValues();
-                      }
-                    },
-                    child: const Text('Cost Per Mile'),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor().secondaryAppColor,
-                        foregroundColor: Colors.white),
-                    key: truckPaymentButtonKey,
-                    onPressed: () async {
-                      final result = await Get.to(() => CalculatorScreen());
-                      if (result == true) {
-                        homeController.fetchTruckPaymentIntialValues();
-                      }
-                    },
-                    child: const Text('Fixed Payment'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              if (homeController.fTrcukPayment.value != 0.0 &&
-                  homeController.fPermileageFee.value != 0.0)
-                CardWidget(
-                  onTap: () async {
-                    bool documentExists = await FirebaseServices()
-                        .checkIfCalculatedValuesDocumentExists();
-                    if (documentExists) {
-                      await FirebaseServices()
-                          .firestore
-                          .collection('users')
-                          .doc(FirebaseServices().auth.currentUser!.uid)
-                          .collection('calculatedValues')
-                          .limit(1)
-                          .get();
-                      Get.to(() => UpdateScreen(
-                          homeController: homeController, isUpdate: true));
-                    } else {
-                      Get.to(() => LoadScreen(
-                          homeController: homeController, isUpdate: false));
-                    }
-                  },
-                  butonText: 'Calculate',
-                  cardText:
-                      'This is a calculator where you can calculate your expanses',
-                  cardColor: AppColor().secondaryAppColor,
-                )
-              else
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Card(
-                    color: AppColor().secondaryAppColor.withOpacity(.7),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if (homeController.fPermileageFee.value == 0.0)
-                            const Text(
-                              "1 - Please add 'Cost Per Mile' value.",
-                              style: TextStyle(
-                                fontFamily: robotoRegular,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.yellowAccent,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          if (homeController.fTrcukPayment.value == 0.0)
-                            const Text(
-                              "2 - Please add 'Fixed Payment'.",
-                              style: TextStyle(
-                                fontFamily: robotoRegular,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.yellowAccent,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                        ],
-                      ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        drawer: MyDrawerWidget(),
+        key: _scaffoldKey,
+        appBar: AppBar(),
+        body: SafeArea(
+          child: Obx(() {
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                Center(
+                  child: Text(
+                    AppClass().getGreeting(),
+                    style: const TextStyle(
+                      fontFamily: robotoRegular,
+                      fontSize: 25,
+                      // fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
-              const SizedBox(height: 10),
-            ],
-          );
-        }),
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor().secondaryAppColor,
+                          foregroundColor: Colors.white),
+                      key: mileageButtonKey,
+                      onPressed: () async {
+                        final result = await Get.to(() => MileageFeSection(
+                              homeController: homeController,
+                              isUpdate: true,
+                            ));
+                        if (result == true) {
+                          homeController.fetchMileageValues();
+                        }
+                      },
+                      child: const Text('Cost Per Mile'),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColor().secondaryAppColor,
+                          foregroundColor: Colors.white),
+                      key: truckPaymentButtonKey,
+                      onPressed: () async {
+                        final result = await Get.to(() => CalculatorScreen());
+                        if (result == true) {
+                          homeController.fetchTruckPaymentIntialValues();
+                        }
+                      },
+                      child: const Text('Fixed Payment'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                if (homeController.fTrcukPayment.value != 0.0 &&
+                    homeController.fPermileageFee.value != 0.0)
+                  CardWidget(
+                    onTap: () async {
+                      bool documentExists = await FirebaseServices()
+                          .checkIfCalculatedValuesDocumentExists();
+                      if (documentExists) {
+                        await FirebaseServices()
+                            .firestore
+                            .collection('users')
+                            .doc(FirebaseServices().auth.currentUser!.uid)
+                            .collection('calculatedValues')
+                            .limit(1)
+                            .get();
+                        Get.to(() => UpdateScreen(
+                            homeController: homeController, isUpdate: true));
+                      } else {
+                        Get.to(() => LoadScreen(
+                            homeController: homeController, isUpdate: false));
+                      }
+                    },
+                    butonText: 'Calculate',
+                    cardText:
+                        'This is a calculator where you can calculate your expanses',
+                    cardColor: AppColor().secondaryAppColor,
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Card(
+                      color: AppColor().secondaryAppColor.withOpacity(.7),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (homeController.fPermileageFee.value == 0.0)
+                              const Text(
+                                "1 - Please add 'Cost Per Mile' value.",
+                                style: TextStyle(
+                                  fontFamily: robotoRegular,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.yellowAccent,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            if (homeController.fTrcukPayment.value == 0.0)
+                              const Text(
+                                "2 - Please add 'Fixed Payment'.",
+                                style: TextStyle(
+                                  fontFamily: robotoRegular,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.yellowAccent,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 10),
+              ],
+            );
+          }),
+        ),
       ),
     );
   }

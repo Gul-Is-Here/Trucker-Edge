@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trucker_edge/controllers/home_controller.dart';
 import 'package:intl/intl.dart';
+import 'dart:async'; // Add this import
 
 import '../../services/firebase_services.dart';
 
@@ -26,17 +27,29 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
   // Add a key to refresh the state when the data changes
   late Future<List<Map<String, dynamic>>> _futureData;
+  Timer? _autoRefreshTimer; // Timer for auto-refresh
 
   @override
   void initState() {
     super.initState();
     _futureData = FirebaseServices().fetchAllEntriesForEditing();
+    _startAutoRefresh(); // Start auto-refresh
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
+    _autoRefreshTimer?.cancel(); // Cancel the timer
     super.dispose();
+  }
+
+  // Function to start auto-refresh
+  void _startAutoRefresh() {
+    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
+      setState(() {
+        _futureData = FirebaseServices().fetchAllEntriesForEditing();
+      });
+    });
   }
 
   @override
@@ -62,7 +75,15 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
             var data = snapshot.data ?? [];
             if (data.isEmpty) {
-              return const Center(child: Text('Please Add loads'));
+              // Show a message when there are no entries available
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('No entries available.'),
+                  ],
+                ),
+              );
             }
 
             return Scrollbar(
@@ -116,7 +137,8 @@ class _UpdateScreenState extends State<UpdateScreen> {
                         ? DateFormat('yyyy-MM-dd').format(timestamp)
                         : 'N/A';
                     var time = timestamp != null
-                        ? DateFormat('HH:mm:ss').format(timestamp)
+                        ? DateFormat('hh:mm:ss a')
+                            .format(timestamp) // Format time in AM/PM
                         : 'N/A';
                     var loadId = load['id'] ?? 'Unknown';
                     return DataRow(
@@ -129,9 +151,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
                           style: const TextStyle(
                               fontFamily: robotoRegular, fontSize: 14),
                         )),
-                        DataCell(Text(time,
-                            style: const TextStyle(
-                                fontFamily: robotoRegular, fontSize: 14))),
+                        DataCell(Text(
+                          time,
+                          style: const TextStyle(
+                              fontFamily: robotoRegular, fontSize: 14),
+                        )),
                         DataCell(
                           Row(
                             children: [
