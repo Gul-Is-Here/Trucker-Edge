@@ -28,8 +28,8 @@ class ChartScreen extends StatelessWidget {
         // Added SingleChildScrollView
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 'Profit/Loss Chart',
                 style: TextStyle(
@@ -59,8 +59,8 @@ class ChartScreen extends StatelessWidget {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+            const Padding(
+              padding: EdgeInsets.all(8.0),
               child: Text(
                 'Total Dispatched Miles',
                 style: TextStyle(

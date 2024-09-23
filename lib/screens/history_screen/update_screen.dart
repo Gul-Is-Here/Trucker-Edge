@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trucker_edge/controllers/home_controller.dart';
 import 'package:intl/intl.dart';
-import 'dart:async'; // Add this import
+import 'dart:async';
 
 import '../../services/firebase_services.dart';
 
@@ -24,31 +24,34 @@ class UpdateScreen extends StatefulWidget {
 
 class _UpdateScreenState extends State<UpdateScreen> {
   final ScrollController _scrollController = ScrollController();
-
-  // Add a key to refresh the state when the data changes
   late Future<List<Map<String, dynamic>>> _futureData;
-  Timer? _autoRefreshTimer; // Timer for auto-refresh
+  Timer? _autoRefreshTimer;
 
   @override
   void initState() {
     super.initState();
-    _futureData = FirebaseServices().fetchAllEntriesForEditing();
-    _startAutoRefresh(); // Start auto-refresh
+    _fetchData();
+    _startAutoRefresh();
   }
 
   @override
   void dispose() {
     _scrollController.dispose();
-    _autoRefreshTimer?.cancel(); // Cancel the timer
+    _autoRefreshTimer?.cancel();
     super.dispose();
   }
 
-  // Function to start auto-refresh
+  // Function to fetch the data and refresh the state
+  void _fetchData() {
+    setState(() {
+      _futureData = FirebaseServices().fetchAllEntriesForEditing();
+    });
+  }
+
+  // Function to start auto-refresh every 60 seconds
   void _startAutoRefresh() {
-    _autoRefreshTimer = Timer.periodic(const Duration(seconds: 60), (timer) {
-      setState(() {
-        _futureData = FirebaseServices().fetchAllEntriesForEditing();
-      });
+    _autoRefreshTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      _fetchData(); // Fetch new data and refresh the state
     });
   }
 
@@ -75,7 +78,6 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
             var data = snapshot.data ?? [];
             if (data.isEmpty) {
-              // Show a message when there are no entries available
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -137,8 +139,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                         ? DateFormat('yyyy-MM-dd').format(timestamp)
                         : 'N/A';
                     var time = timestamp != null
-                        ? DateFormat('hh:mm:ss a')
-                            .format(timestamp) // Format time in AM/PM
+                        ? DateFormat('hh:mm:ss a').format(timestamp)
                         : 'N/A';
                     var loadId = load['id'] ?? 'Unknown';
                     return DataRow(
@@ -175,7 +176,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                 },
                                 child: const Text('Edit'),
                               ),
-                              // Remove the delete button
+                              // Removed delete button as requested
                             ],
                           ),
                         ),
@@ -191,3 +192,4 @@ class _UpdateScreenState extends State<UpdateScreen> {
     );
   }
 }
+
