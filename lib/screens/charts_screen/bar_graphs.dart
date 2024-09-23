@@ -131,31 +131,44 @@ class MyBarGraph extends StatelessWidget {
                               axisNameSize: 10,
                               axisNameWidget: Text(''),
                               sideTitles: SideTitles(
-                                showTitles: true,
-                                getTitlesWidget: (value, meta) {
-                                  // Assuming 'label' in BarData3 is in a parseable date format (e.g., "2024-08-28")
-                                  String dateString =
-                                      dataToDisplay[value.toInt()].label;
-
-                                  final fullDateString =
-                                      '$dateString ${DateTime.now().year}';
-                                  final formattedDate = DateFormat("d MMM yyyy")
-                                      .parse(fullDateString);
-                                  final displayDate = DateFormat("d-MM-yyyy")
-                                      .format(formattedDate);
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Text(
-                                      displayDate,
-                                      style: TextStyle(
-                                        fontSize: 9,
-                                        fontFamily: robotoRegular,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                  showTitles: true,
+                                  getTitlesWidget: (value, meta) {
+                                    String dateString =
+                                        dataToDisplay[value.toInt()].label;
+                                    try {
+                                      // Assuming dateString is in "yyyy-MM-dd" format
+                                      final formattedDate =
+                                          DateFormat("MM-dd").parse(dateString);
+                                      final displayDate = DateFormat("d/MM")
+                                          .format(formattedDate);
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          displayDate,
+                                          style: TextStyle(
+                                            fontSize: 9,
+                                            fontFamily: robotoRegular,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      // Handle parsing error
+                                      return Padding(
+                                        padding:
+                                            const EdgeInsets.only(top: 8.0),
+                                        child: Text(
+                                          'Invalid Date',
+                                          style: TextStyle(
+                                            fontSize: 9,
+                                            fontFamily: robotoRegular,
+                                            color: Colors.red,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }),
                             ),
                           ),
                           barGroups: dataToDisplay.asMap().entries.map((entry) {
