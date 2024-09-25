@@ -24,7 +24,6 @@ async function sendNotification(title, body, topicName = null) {
       logger.warn("Notification title or body is empty. Notification not sent.");
       return; // Exit the function early
     }
-
     if (topicName) {
       const message = { notification: { title, body }, topic: topicName };
       await admin.messaging().send(message);
