@@ -55,11 +55,10 @@ class BarChartController extends GetxController {
             value: totalProfit,
           ));
         } else {
-          // print(lineChart);
+   
         }
       }
 
-      // print('Bar line length: ${lineChart.length}');
     } catch (e) {
     } finally {
       isLoading.value = false;

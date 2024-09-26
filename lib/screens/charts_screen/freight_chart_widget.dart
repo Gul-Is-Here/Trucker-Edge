@@ -37,7 +37,7 @@ class FreightLineChartWidget extends StatelessWidget {
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             color: AppColor().appTextColor,
-            margin: EdgeInsets.all(0),
+            margin: const EdgeInsets.all(0),
             elevation: 10,
             child: SizedBox(
               height: availableHeight * 0.3, // Adjust height as needed
@@ -90,7 +90,6 @@ class FreightLineChartWidget extends StatelessWidget {
                                     ),
                                   );
                                 } catch (e) {
-                                  print('Error parsing date: $e');
                                   return const SizedBox();
                                 }
                               } else {
@@ -101,7 +100,7 @@ class FreightLineChartWidget extends StatelessWidget {
                         ),
                         leftTitles: AxisTitles(
                           axisNameSize: 30,
-                          axisNameWidget: Text(
+                          axisNameWidget: const Text(
                             'Total Freight Charges (\$)',
                             style: TextStyle(fontFamily: robotoRegular),
                           ),
@@ -131,12 +130,12 @@ class FreightLineChartWidget extends StatelessWidget {
                             },
                           ),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: false,
                           ),
                         ),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                           axisNameWidget: Text(
                             '',
                             style: TextStyle(

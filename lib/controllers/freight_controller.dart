@@ -36,7 +36,6 @@ class FreightLineController extends GetxController {
                 value.containsKey('totalFreightCharges')) {
               totalDispatchedMiles += value['totalFreightCharges'];
             } else {
-              print('Invalid entry or missing totalFreightCharges in: $value');
             }
           }
 
@@ -44,21 +43,18 @@ class FreightLineController extends GetxController {
               ? data['transferTimestamp']
               : 'Unknown Date';
 
-          print('timestamp line Chart $timestamp2');
           myFreightLineChart.add(
             MyLineChart2(
               timestamp2,
               totalDispatchedMiles,
             ),
           );
-          print('My Line Chart  : $myFreightLineChart');
+
         } else {
-          print('Missing calculatedValues in: $data');
-          print(myFreightLineChart);
+   
         }
       }
 
-      print('Bar line length: ${myFreightLineChart.length}');
     } finally {
       isLoading.value = false;
     }

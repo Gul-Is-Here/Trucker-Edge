@@ -36,7 +36,6 @@ class LineCartController extends GetxController {
                 value.containsKey('totalDispatchedMiles')) {
               totalDispatchedMiles += value['totalDispatchedMiles'];
             } else {
-              print('Invalid entry or missing totalDispatchedMiles in: $value');
             }
           }
 
@@ -44,21 +43,18 @@ class LineCartController extends GetxController {
               ? data['transferTimestamp']
               : 'Unknown Date';
 
-          print('timestamp line Chart $timestamp2');
+
           myLineChart.add(
             LineChartDataModel(
               timestamp2,
               totalDispatchedMiles,
             ),
           );
-          print('My Line Chart  : $myLineChart');
+  
         } else {
-          print('Missing calculatedValues in: $data');
-          print(myLineChart);
+    
         }
       }
-
-      print('Bar line length: ${myLineChart.length}');
     } finally {
       isLoading.value = false;
     }

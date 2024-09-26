@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trucker_edge/services/notification_services.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../services/firebase_services.dart';
@@ -102,7 +100,7 @@ class HomeController extends GetxController {
     fPermileageFee.addListener;
 
     addNewLoad(); // Initialize with the first load
-    // fetchHistoryData(); // Fetch data from Firebase
+   
     FirebaseServices().fetchPerMileageAmount(); // Fetch per-mile cost
     FirebaseServices().fetchFixedWeeklyCost(); // Fetch weekly fixed costs
     fetchMileageValues(); //  This Method is Used To fetch Intial Values of Trcuk Per Mileage fee Payments in Mileage Screen
@@ -111,10 +109,6 @@ class HomeController extends GetxController {
     FirebaseServices().fetchIsEditabbleTruckPayment();
   }
 
-  // void fetchInitialValues() async {
-  //   fTrcukPayment.value =  fetchMileageValues() as double;
-  //   fPermileageFee.value = await FirebaseServices().fetchMileageValues();
-  // }
 
   @override
   void onClose() {
@@ -159,7 +153,6 @@ class HomeController extends GetxController {
   }
 
   void _calculateFixedCost() async {
-    // Get the monthly amounts from the input fields
     double truckPaymentAmount =
         double.tryParse(tTruckPaymentController.text) ?? 0;
     double truckInsuranceAmount =
@@ -169,8 +162,6 @@ class HomeController extends GetxController {
     double eldService = double.tryParse(tEldServicesController.text) ?? 0;
     double overHeadAmount = double.tryParse(tOverHeadController.text) ?? 0;
     double otherAmount = double.tryParse(tOtherController.text) ?? 0;
-
-    // Calculate weekly values from monthly amounts
     weeklyTruckPayment.value = (truckPaymentAmount * 12) / 52;
     weeklyInsurance.value = (truckInsuranceAmount * 12) / 52;
     weeklyTrailerLease.value = (trailerLeaseAmount * 12) / 52;
@@ -317,25 +308,7 @@ class HomeController extends GetxController {
     }
   }
 
-  // void fetchHistoryData() async {
-  //   User? user = FirebaseServices().auth.currentUser;
-  //   if (user != null) {
-  //     QuerySnapshot querySnapshot = await FirebaseServices()
-  //         .firestore
-  //         .collection('users')
-  //         .doc(user.uid)
-  //         .collection('calculatedValues')
-  //         .get();
 
-  //     // Process the data from the querySnapshot as needed
-  //     // For example, convert it to a list of entries
-  //     List<DocumentSnapshot> documents = querySnapshot.docs;
-  //     // Update your state with the new data
-  //     print('Fetched ${documents.length} documents.');
-  //   } else {
-  //     print('Error: No user is currently logged in.');
-  //   }
-  // }
 
   void fetchTruckPaymentIntialValues() async {
     Map<String, double> weeklyFixedCosts =

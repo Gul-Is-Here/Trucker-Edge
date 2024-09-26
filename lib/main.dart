@@ -9,7 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'controllers/auth_controller.dart';
@@ -31,7 +31,7 @@ void main() async {
       });
     });
 
-    await MobileAds.instance.initialize();
+    // await MobileAds.instance.initialize();
 
     // Initialize FlutterLocalNotificationsPlugin here
     await NotificationServices().initializeNotification();

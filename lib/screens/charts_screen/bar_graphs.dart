@@ -39,7 +39,7 @@ class MyBarGraph extends StatelessWidget {
         color: AppColor().appTextColor,
         elevation: 10,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-        margin: EdgeInsets.all(0),
+        margin: const EdgeInsets.all(0),
         child: Column(
           children: [
             Expanded(
@@ -58,7 +58,7 @@ class MyBarGraph extends StatelessWidget {
                     child: SizedBox(
                       height: availableHeight * 0.4, // 40% of available height
                       width: chartWidth < availableWidth
-                          ? availableWidth * 0.8
+                          ? availableWidth * 01
                           : chartWidth, // Use available width or allow scrolling
                       child: BarChart(
                         BarChartData(
@@ -129,7 +129,7 @@ class MyBarGraph extends StatelessWidget {
                                 sideTitles: SideTitles(showTitles: false)),
                             bottomTitles: AxisTitles(
                               axisNameSize: 10,
-                              axisNameWidget: Text(''),
+                              axisNameWidget: const Text(''),
                               sideTitles: SideTitles(
                                   showTitles: true,
                                   getTitlesWidget: (value, meta) {
@@ -146,7 +146,7 @@ class MyBarGraph extends StatelessWidget {
                                             const EdgeInsets.only(top: 8.0),
                                         child: Text(
                                           displayDate,
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 9,
                                             fontFamily: robotoRegular,
                                             color: Colors.black,
@@ -155,9 +155,9 @@ class MyBarGraph extends StatelessWidget {
                                       );
                                     } catch (e) {
                                       // Handle parsing error
-                                      return Padding(
+                                      return const Padding(
                                         padding:
-                                            const EdgeInsets.only(top: 8.0),
+                                            EdgeInsets.only(top: 8.0),
                                         child: Text(
                                           'Invalid Date',
                                           style: TextStyle(
