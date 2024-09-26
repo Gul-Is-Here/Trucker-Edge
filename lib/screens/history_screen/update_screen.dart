@@ -78,11 +78,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
 
             var data = snapshot.data ?? [];
             if (data.isEmpty) {
-              return Center(
+              return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('No entries available.'),
+                    Text('No entries available.'),
                   ],
                 ),
               );

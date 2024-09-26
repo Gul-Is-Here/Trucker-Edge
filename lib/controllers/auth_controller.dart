@@ -1,6 +1,5 @@
 import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/services/firebase_services.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -95,7 +94,7 @@ class AuthController extends GetxController {
           phoneNumber: _formatPhoneNumber(phone),
           verificationCompleted: (PhoneAuthCredential credential) async {
             await _auth.signInWithCredential(credential);
-            Get.offAll(() => HomeScreen());
+            Get.offAll(() => const HomeScreen());
           },
           verificationFailed: (FirebaseAuthException e) {
             Get.snackbar('Error', 'Verification failed: ${e.message}',
@@ -143,7 +142,7 @@ class AuthController extends GetxController {
 
       if (isLogin) {
         await _auth.signInWithCredential(credential);
-        Get.offAll(() => HomeScreen());
+        Get.offAll(() => const HomeScreen());
       } else {
         await _registerUserWithCredential(
           credential,
@@ -173,7 +172,7 @@ class AuthController extends GetxController {
         snackPosition: SnackPosition.BOTTOM);
     FirebaseServices().saveUserToken();
     FirebaseServices().setupTokenRefreshListener();
-    Get.offAll(() => HomeScreen());
+    Get.offAll(() => const HomeScreen());
     isLoading.value = false;
   }
 

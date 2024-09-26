@@ -6,6 +6,8 @@ import '../../constants/image_strings.dart';
 import '../../controllers/auth_controller.dart';
 
 class RegisterScreen extends StatelessWidget {
+  const RegisterScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     AuthController authController = Get.put(AuthController());
@@ -19,13 +21,13 @@ class RegisterScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   Image.asset(
                     appLogo,
                     height: 150,
                     fit: BoxFit.cover,
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Text(
                     'Create an Account',
                     style: TextStyle(
@@ -35,7 +37,7 @@ class RegisterScreen extends StatelessWidget {
                       color: AppColor().secondaryAppColor,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     'Sign up to get started!',
                     style: TextStyle(
@@ -63,7 +65,7 @@ class RegisterScreen extends StatelessWidget {
                             borderSide: BorderSide(
                                 color: AppColor().secondaryAppColor))),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   TextField(
                     cursorColor: AppColor().secondaryAppColor,
                     controller: authController.emailController,
@@ -119,13 +121,13 @@ class RegisterScreen extends StatelessWidget {
                             onPressed: authController.registerUser,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColor().primaryAppColor,
-                              padding: EdgeInsets.symmetric(
+                              padding: const EdgeInsets.symmetric(
                                   horizontal: 100, vertical: 15),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: Text('Register',
+                            child: const Text('Register',
                                 style: TextStyle(
                                   fontFamily: robotoRegular,
                                   fontSize: 16,
@@ -133,7 +135,7 @@ class RegisterScreen extends StatelessWidget {
                                 )),
                           ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Get.back();

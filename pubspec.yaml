@@ -48,11 +48,9 @@ dependencies:
   googleapis_auth: ^1.6.0
   velocity_x: ^4.2.1
   firebase_analytics: ^10.10.7
-  dio: ^5.7.0
-  path_provider: ^2.1.4
-  permission_handler: ^11.3.1
-  # googleapis: ^13.2.0
-  # syncfusion_flutter_charts: ^26.2.10
+  syncfusion_flutter_pdfviewer: ^27.1.50
+  file_picker: ^8.0.7
+  device_info_plus: ^10.1.2
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,6 +76,7 @@ flutter:
   assets:
     - assets/images/
     - assets/tutorial_images/
+    - assets/pdf/
   fonts:
     - family: Raleway-Regular
       fonts:

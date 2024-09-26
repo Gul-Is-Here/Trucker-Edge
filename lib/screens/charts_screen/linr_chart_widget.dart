@@ -88,7 +88,6 @@ class MyLineChartWidget extends StatelessWidget {
                                     ),
                                   );
                                 } catch (e) {
-                                  print('Error parsing date: $e');
                                   return const SizedBox();
                                 }
                               } else {
@@ -99,7 +98,7 @@ class MyLineChartWidget extends StatelessWidget {
                         ),
                         leftTitles: AxisTitles(
                           axisNameSize: 30,
-                          axisNameWidget: Text('Total Dispatched Miles'),
+                          axisNameWidget: const Text('Total Dispatched Miles'),
                           sideTitles: SideTitles(
                             showTitles: true,
                             reservedSize: 25,
@@ -126,12 +125,12 @@ class MyLineChartWidget extends StatelessWidget {
                             },
                           ),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: false,
                           ),
                         ),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                           axisNameWidget: Text(
                             '',
                             style: TextStyle(

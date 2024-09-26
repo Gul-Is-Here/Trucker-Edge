@@ -78,7 +78,7 @@ class _LoadScreenState extends State<LoadScreen> {
           content: Text(widget.isUpdate
               ? 'Are you sure you want to update?'
               : 'Are you sure you want to submit?'),
-          contentTextStyle: TextStyle(
+          contentTextStyle: const TextStyle(
             fontFamily: robotoRegular,
             color: Colors.black,
           ),
@@ -121,7 +121,7 @@ class _LoadScreenState extends State<LoadScreen> {
         children: [
           Expanded(
             child: Padding(
-              padding: EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(16.0),
               child: Obx(
                 () => Form(
                   key: formKey,
@@ -234,8 +234,6 @@ class _LoadScreenState extends State<LoadScreen> {
                                                       child:
                                                           const Text('Delete'),
                                                       onPressed: () {
-                                                        print(
-                                                            'widget.isUpdate: ${widget.isUpdate}');
                                                         if (widget.isUpdate) {
                                                           widget.homeController
                                                               .removeLoad(
@@ -314,7 +312,7 @@ class _LoadScreenState extends State<LoadScreen> {
                                               Icons.add,
                                               size: 14,
                                             ),
-                                            label: Text(
+                                            label: const Text(
                                               'Add',
                                               style: TextStyle(fontSize: 14),
                                             ),
@@ -674,7 +672,7 @@ class _LoadScreenState extends State<LoadScreen> {
                                   'Success',
                                   'Data submitted successfully',
                                   backgroundColor: AppColor().primaryAppColor,
-                                  duration: Duration(seconds: 2),
+                                  duration: const Duration(seconds: 2),
                                   colorText: Colors.white,
                                 );
 

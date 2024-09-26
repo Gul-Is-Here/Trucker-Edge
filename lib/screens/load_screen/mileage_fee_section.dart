@@ -13,8 +13,7 @@ class MileageFeSection extends StatefulWidget {
   final bool isUpdate;
 
   const MileageFeSection(
-      {Key? key, required this.homeController, required this.isUpdate})
-      : super(key: key);
+      {super.key, required this.homeController, required this.isUpdate});
 
   @override
   _MileageFeSectionState createState() => _MileageFeSectionState();

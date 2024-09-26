@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginScreen extends StatelessWidget {
+  const LoginScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(AuthController());
     return Scaffold(
-      // backgroundColor: AppColor().appTextColor,
+    
       body: Stack(
         children: [
           SingleChildScrollView(
@@ -21,13 +23,13 @@ class LoginScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: 80),
+                  const SizedBox(height: 80),
                   Image.asset(
                     appLogo,
                     height: 150,
                     fit: BoxFit.cover,
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Text(
                     AppClass().getGreeting(),
                     style: TextStyle(
@@ -37,7 +39,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColor().secondaryAppColor,
                     ),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   Text(
                     'Please login with your phone number',
                     style: TextStyle(
@@ -46,7 +48,7 @@ class LoginScreen extends StatelessWidget {
                       color: AppColor().secondaryAppColor,
                     ),
                   ),
-                  SizedBox(height: 40),
+                  const SizedBox(height: 40),
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.8),
@@ -75,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                       keyboardType: TextInputType.number,
                     ),
                   ),
-                  SizedBox(height: 30),
+                  const SizedBox(height: 30),
                   Obx(
                     () => controller.isLoading.value
                         ? CircularProgressIndicator(
@@ -101,7 +103,7 @@ class LoginScreen extends StatelessWidget {
                             ),
                           ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       Get.to(() => RegisterScreen());

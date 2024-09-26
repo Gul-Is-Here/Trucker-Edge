@@ -160,6 +160,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                             ),
                             Card(
                               elevation: 5,
+                              color: AppColor().appTextColor,
                               shape: const RoundedRectangleBorder(
                                   borderRadius: BorderRadiusDirectional.only(
                                       topStart: Radius.circular(10),
@@ -374,6 +375,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                     ),
                                   ),
                                   Card(
+                                    color: AppColor().appTextColor,
                                     elevation: 5,
                                     shape: RoundedRectangleBorder(
                                       borderRadius:
@@ -570,6 +572,8 @@ class HistoryDetailsScreen extends StatelessWidget {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8),
                                       child: Card(
+                                        color: AppColor().appTextColor,
+                                        
                                         elevation: 5,
                                         shape: const RoundedRectangleBorder(
                                             borderRadius:

@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-import '../screens/charts_screen/analytics_screen.dart';
 import '../screens/charts_screen/chart_screen.dart';
 
 class MyDrawerWidget extends StatelessWidget {
@@ -71,7 +70,7 @@ class MyDrawerWidget extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Icon(
-                    Icons.play_circle_outline_outlined,
+                    Icons.document_scanner_outlined,
                     color: AppColor().secondaryAppColor,
                     size: 25,
                   ),

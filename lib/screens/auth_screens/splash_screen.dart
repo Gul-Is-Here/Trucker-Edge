@@ -1,5 +1,5 @@
 import 'package:trucker_edge/controllers/home_controller.dart';
-import 'package:trucker_edge/main.dart';
+
 import 'package:trucker_edge/services/firebase_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,11 +8,8 @@ import 'package:trucker_edge/constants/image_strings.dart';
 import 'package:trucker_edge/screens/auth_screens/login_screen.dart';
 import 'package:trucker_edge/screens/home_screens/home_screen.dart';
 
-import '../../controllers/auth_controller.dart';
-import '../../services/notification_services.dart';
-
 class SplashScreen extends StatefulWidget {
-  const SplashScreen({Key? key}) : super(key: key);
+  const SplashScreen({super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -36,10 +33,11 @@ class _SplashScreenState extends State<SplashScreen> {
     User? user = _auth.currentUser;
     if (user != null) {
       Get.offAll(
-          () => HomeScreen()); // User is signed in, navigate to home screen
+          () => const HomeScreen()); // User is signed in, navigate to home screen
     } else {
       Get.offAll(() =>
-          LoginScreen()); // No user is signed in, navigate to login screen
+       
+          const LoginScreen()); // No user is signed in, navigate to login screen
     }
   }
 
