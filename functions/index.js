@@ -122,8 +122,8 @@ async function transferAndDeleteWeeklyData() {
         logger.info(`History already exists for user ${userId} for week ${currentWeekId}. Skipping transfer.`);
       }
     }
-  } catch (e) {
-    logger.error("Error in transferAndDeleteWeeklyData:", e);
+  } catch (error) {
+    logger.error("Error in transferAndDeleteWeeklyData:", error);
   }
 }
 
@@ -132,13 +132,14 @@ exports.sendMondayNotification = onSchedule(
   {
     schedule: "every monday 06:00",
     timeZone: "America/Chicago",
-    options: { cpu: 1, memory: "512MiB" }
+    options: { cpu: 1, memory: "1GB", timeoutSeconds: 540 } // Increase timeout to 9 minutes
   },
   async (context) => {
     await sendNotification("Your new week starts!", "It's Monday morning. Get ready to add your loads.", "loads");
     await transferAndDeleteWeeklyData();
   }
 );
+
 
 // Scheduled function to send reminder notifications on Friday
 exports.remindToAddLoadFriday = onSchedule(
@@ -164,8 +165,13 @@ exports.sendSundayNotification = onSchedule(
   }
 );
 
-// Example HTTP function (for testing purposes)
-exports.helloWorld = onRequest((request, response) => {
-  logger.info("Hello logs!", { structuredData: true });
-  response.send("Hello from Firebase!");
+// Example HTTP function to manually trigger the data transfer (for testing purposes)
+exports.manualTransfer = onRequest(async (request, response) => {
+  try {
+    await transferAndDeleteWeeklyData();
+    response.send("Manual transfer and delete operation completed.");
+  } catch (error) {
+    logger.error("Error during manual transfer", error);
+    response.status(500).send("Error during manual transfer.");
+  }
 });

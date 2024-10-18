@@ -25,7 +25,6 @@ class ChartScreen extends StatelessWidget {
       drawer: MyDrawerWidget(),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        // Added SingleChildScrollView
         child: Column(
           children: [
             const Padding(
@@ -40,7 +39,7 @@ class ChartScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 300, // Adjust height as needed
+              height: 300,
               child: Column(
                 children: [
                   Expanded(
@@ -48,11 +47,11 @@ class ChartScreen extends StatelessWidget {
                       if (barChartController.isLoading.value) {
                         return const Center(child: CircularProgressIndicator());
                       }
-
+                      if (barChartController.barData.isEmpty) {
+                        return const Center(child: Text('No data available'));
+                      }
                       return MyBarGraph(
-                        barDataList: barChartController.barData.isNotEmpty
-                            ? barChartController.barData
-                            : [],
+                        barDataList: barChartController.barData,
                       );
                     }),
                   ),
@@ -71,7 +70,7 @@ class ChartScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 300, // Adjust height as needed
+              height: 300,
               child: Column(
                 children: [
                   Expanded(
@@ -79,11 +78,11 @@ class ChartScreen extends StatelessWidget {
                       if (lineChartController.isLoading.value) {
                         return const Center(child: CircularProgressIndicator());
                       }
-
+                      if (lineChartController.myLineChart.isEmpty) {
+                        return const Center(child: Text('No data available'));
+                      }
                       return MyLineChartWidget(
-                        lineDataList: lineChartController.myLineChart.isNotEmpty
-                            ? lineChartController.myLineChart
-                            : [],
+                        lineDataList: lineChartController.myLineChart,
                       );
                     }),
                   ),
@@ -101,7 +100,7 @@ class ChartScreen extends StatelessWidget {
               ),
             ),
             SizedBox(
-              height: 300, // Adjust height as needed
+              height: 300,
               child: Column(
                 children: [
                   Expanded(
@@ -109,12 +108,11 @@ class ChartScreen extends StatelessWidget {
                       if (freightLineController.isLoading.value) {
                         return const Center(child: CircularProgressIndicator());
                       }
-
+                      if (freightLineController.myFreightLineChart.isEmpty) {
+                        return const Center(child: Text('No data available'));
+                      }
                       return FreightLineChartWidget(
-                        lineDataList:
-                            freightLineController.myFreightLineChart.isNotEmpty
-                                ? freightLineController.myFreightLineChart
-                                : [],
+                        lineDataList: freightLineController.myFreightLineChart,
                       );
                     }),
                   ),
