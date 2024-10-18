@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:61985665289:android:6c24e6456e8959597763d8",
+        "mobilesdk_app_id": "1:61985665289:android:3ff77ce439cb59427763d8",
         "android_client_info": {
-          "package_name": "com.csgpakistantruckeredge.app"
+          "package_name": "com.csgpaskistan.truckeredge"
         }
       },
       "oauth_client": [],

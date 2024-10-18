@@ -68,22 +68,27 @@ class OTPVerificationScreen extends StatelessWidget {
                         controller: _otpControllers[index],
                         focusNode: _focusNodes[index],
                         decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                  color: AppColor().secondaryAppColor),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: AppColor().secondaryAppColor,
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                  color: AppColor().secondaryAppColor),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                              color: AppColor().secondaryAppColor,
                             ),
-                            focusColor: AppColor().primaryAppColor),
+                          ),
+                          focusColor: AppColor().primaryAppColor,
+                        ),
                         textAlign: TextAlign.center,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(fontSize: 20),
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(1),
+                          FilteringTextInputFormatter
+                              .digitsOnly, // Restrict to digits
                         ],
                         onChanged: (value) {
                           if (value.length == 1 && index < 5) {

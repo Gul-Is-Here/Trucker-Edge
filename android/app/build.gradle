@@ -15,7 +15,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.csgpakistantruckeredge.app"
+    namespace = "com.csgpaskistan.truckeredge"
     compileSdk = 34
     ndkVersion = flutter.ndkVersion
 
@@ -29,10 +29,10 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.csgpakistantruckeredge.app"
+        applicationId "com.csgpaskistan.truckeredge"
         minSdk = 23
         targetSdk = 34
-        versionCode = flutter.versionCode
+        versionCode = 2
         versionName = flutter.versionName
 
         // Enable MultiDex
