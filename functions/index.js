@@ -13,7 +13,7 @@ function getWeekNumber(d) {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
   date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7));
   const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
-  const weekNo = Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+  const weekNo = Math.ceil(((date - yearStart) / 86400000 + 1) / 7);
   return `${date.getUTCFullYear()}-W${weekNo}`;
 }
 
@@ -21,7 +21,9 @@ function getWeekNumber(d) {
 async function sendNotification(title, body, topicName = null) {
   try {
     if (!title || !body) {
-      logger.warn("Notification title or body is empty. Notification not sent.");
+      logger.warn(
+        "Notification title or body is empty. Notification not sent."
+      );
       return; // Exit the function early
     }
     if (topicName) {
@@ -39,7 +41,9 @@ async function sendNotification(title, body, topicName = null) {
       if (tokens.length > 0) {
         const message = { notification: { title, body }, tokens: tokens };
         const response = await admin.messaging().sendMulticast(message);
-        logger.info(`Notifications sent: ${response.successCount} success, ${response.failureCount} failed.`);
+        logger.info(
+          `Notifications sent: ${response.successCount} success, ${response.failureCount} failed.`
+        );
       } else {
         logger.info("No tokens found");
       }
@@ -73,7 +77,9 @@ async function transferAndDeleteWeeklyData() {
       const historyDocSnapshot = await historyDocRef.get();
 
       if (!historyDocSnapshot.exists) {
-        logger.info(`No history found for user ${userId} for week ${currentWeekId}. Proceeding with transfer.`);
+        logger.info(
+          `No history found for user ${userId} for week ${currentWeekId}. Proceeding with transfer.`
+        );
 
         let combinedData = {
           calculatedValues: [],
@@ -94,32 +100,44 @@ async function transferAndDeleteWeeklyData() {
             combinedData.calculatedValues.push(doc.data());
             try {
               await doc.ref.delete(); // Delete the document after transferring
-              logger.info(`Calculated Values Document ${doc.id} deleted for user ${userId}.`);
+              logger.info(
+                `Calculated Values Document ${doc.id} deleted for user ${userId}.`
+              );
             } catch (e) {
               logger.error(`Error deleting document ${doc.id}: ${e}`);
             }
           }
 
           // Get all mileage fees for the user
-          const mileageFeeSnapshot = await userDocRef.collection("perMileageCost").get();
+          const mileageFeeSnapshot = await userDocRef
+            .collection("perMileageCost")
+            .get();
           for (const mileageDoc of mileageFeeSnapshot.docs) {
             combinedData.mileageFee.push(mileageDoc.data());
           }
 
           // Get all truck payments for the user
-          const truckPaymentSnapshot = await userDocRef.collection("truckPaymentCollection").get();
+          const truckPaymentSnapshot = await userDocRef
+            .collection("truckPaymentCollection")
+            .get();
           for (const truckDoc of truckPaymentSnapshot.docs) {
             combinedData.truckPayment.push(truckDoc.data());
           }
 
           // Save the combined data to the 'history' collection for the current week
           await historyDocRef.set(combinedData);
-          logger.info(`Data transferred and saved to history for user ${userId} for week ${currentWeekId}.`);
+          logger.info(
+            `Data transferred and saved to history for user ${userId} for week ${currentWeekId}.`
+          );
         } else {
-          logger.info(`No calculated values found for user ${userId} for the current week.`);
+          logger.info(
+            `No calculated values found for user ${userId} for the current week.`
+          );
         }
       } else {
-        logger.info(`History already exists for user ${userId} for week ${currentWeekId}. Skipping transfer.`);
+        logger.info(
+          `History already exists for user ${userId} for week ${currentWeekId}. Skipping transfer.`
+        );
       }
     }
   } catch (error) {
@@ -132,14 +150,17 @@ exports.sendMondayNotification = onSchedule(
   {
     schedule: "every monday 06:00",
     timeZone: "America/Chicago",
-    options: { cpu: 1, memory: "1GB", timeoutSeconds: 540 } // Increase timeout to 9 minutes
+    options: { cpu: 1, memory: "1GB", timeoutSeconds: 1000 } // Increase timeout to 9 minutes
   },
   async (context) => {
-    await sendNotification("Your new week starts!", "It's Monday morning. Get ready to add your loads.", "loads");
     await transferAndDeleteWeeklyData();
+    await sendNotification(
+      "Your new week starts!",
+      "It's Monday morning. Get ready to add your loads.",
+      "loads"
+    );
   }
 );
-
 
 // Scheduled function to send reminder notifications on Friday
 exports.remindToAddLoadFriday = onSchedule(
@@ -149,7 +170,11 @@ exports.remindToAddLoadFriday = onSchedule(
     options: { cpu: 1, memory: "512MiB" }
   },
   async (context) => {
-    await sendNotification("Reminder: Add Your Load", "Please make sure to add your loads today.", "loads");
+    await sendNotification(
+      "Reminder: Add Your Load",
+      "Please make sure to add your loads today.",
+      "loads"
+    );
   }
 );
 
@@ -161,7 +186,11 @@ exports.sendSundayNotification = onSchedule(
     options: { cpu: 1, memory: "512MiB" }
   },
   async (context) => {
-    await sendNotification("Hurry up to add loads!", "Hurry up! Your loads will be transferred soon.", "loads");
+    await sendNotification(
+      "Hurry up to add loads!",
+      "Hurry up! Your loads will be transferred soon.",
+      "loads"
+    );
   }
 );
 
