@@ -150,7 +150,7 @@ exports.sendMondayNotification = onSchedule(
   {
     schedule: "every monday 06:00",
     timeZone: "America/Chicago",
-    options: { cpu: 1, memory: "1GB", timeoutSeconds: 1000 } // Increase timeout to 9 minutes
+    options: { cpu: 1, memory: "1GB", timeoutSeconds: 100000 } // Increase timeout to 9 minutes
   },
   async (context) => {
     await transferAndDeleteWeeklyData();
