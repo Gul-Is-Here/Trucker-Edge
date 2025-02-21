@@ -18,6 +18,7 @@ class AuthController extends GetxController {
   TextEditingController nameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  RxBool isAgreed = false.obs;
 
   // Ensure the phone number is in the correct format with the country code +1 for USA
   String _formatPhoneNumber(String phone) {
@@ -25,6 +26,7 @@ class AuthController extends GetxController {
   }
 
   void registerUser() async {
+    bool isAgreed = false;
     String name = nameController.text.trim();
     String email = emailController.text.trim();
     String phone = phoneController.text.trim();
@@ -41,7 +43,8 @@ class AuthController extends GetxController {
       await _auth.verifyPhoneNumber(
         phoneNumber: _formatPhoneNumber(phone),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          await _registerUserWithCredential(credential, name, email, phone);
+          await _registerUserWithCredential(
+              credential, name, email, phone, isAgreed);
         },
         verificationFailed: (FirebaseAuthException e) {
           Get.snackbar('Error', 'Verification failed: ${e.message}',
@@ -145,11 +148,11 @@ class AuthController extends GetxController {
         Get.offAll(() => const HomeScreen());
       } else {
         await _registerUserWithCredential(
-          credential,
-          nameController.text.trim(),
-          emailController.text.trim(),
-          phoneController.text.trim(),
-        );
+            credential,
+            nameController.text.trim(),
+            emailController.text.trim(),
+            phoneController.text.trim(),
+            isAgreed.value);
       }
     } catch (e) {
       Get.snackbar('Error', 'Invalid OTP: ${e.toString()}',
@@ -160,14 +163,11 @@ class AuthController extends GetxController {
 
   void onUserAuthenticated(User user) {}
   Future<void> _registerUserWithCredential(PhoneAuthCredential credential,
-      String name, String email, String phone) async {
+      String name, String email, String phone, bool isAgreed) async {
     UserCredential userCredential =
         await _auth.signInWithCredential(credential);
-    await _firestore.collection('users').doc(userCredential.user!.uid).set({
-      'name': name,
-      'email': email,
-      'phone': phone,
-    });
+    await _firestore.collection('users').doc(userCredential.user!.uid).set(
+        {'name': name, 'email': email, 'phone': phone, 'isAgreed': isAgreed});
     Get.snackbar('Success', 'Registration successful',
         snackPosition: SnackPosition.BOTTOM);
     FirebaseServices().saveUserToken();
@@ -189,8 +189,6 @@ class AuthController extends GetxController {
           snackPosition: SnackPosition.BOTTOM);
     }
   }
-
-  
 
   // Method to get the current user UID
   String? getCurrentUserUID() {

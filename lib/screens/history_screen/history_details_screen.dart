@@ -4,7 +4,7 @@ import 'package:trucker_edge/controllers/histroy_controller.dart';
 import 'package:trucker_edge/widgets/my_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 class HistoryDetailsScreen extends StatelessWidget {
   final String documentId;
@@ -126,11 +126,11 @@ class HistoryDetailsScreen extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            10.heightBox,
+                           SizedBox(height:10),
                             const Divider(
                               thickness: 2,
                             ),
-                            10.heightBox,
+                            SizedBox(height:10),
                             Obx(
                               () => ListTile(
                                 onTap: () {
@@ -197,8 +197,9 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .start,
+                                                            spacing: 10,
                                                     children: [
-                                                      10.heightBox,
+                                                     
                                                       Text(
                                                         'Truck Payment',
                                                         style: TextStyle(
@@ -208,7 +209,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'ELD Service',
                                                         style: TextStyle(
@@ -218,7 +219,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Trailer Lease',
                                                         style: TextStyle(
@@ -228,7 +229,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Insurance',
                                                         style: TextStyle(
@@ -238,7 +239,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Overhead',
                                                         style: TextStyle(
@@ -248,7 +249,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Other',
                                                         style: TextStyle(
@@ -260,7 +261,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                       ),
                                                     ],
                                                   ),
-                                                  5.widthBox,
+                                                SizedBox(width:5),
                                                   Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -268,7 +269,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyTruckPayment']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -278,7 +279,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyEldService']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -288,7 +289,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyTrailerLease']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -298,7 +299,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyTruckInsurance']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -308,7 +309,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyOverheadCost']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -318,7 +319,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 12),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         '\$${getValue(data['truckPayment'][index]['monthlyOtherCost']).toStringAsFixed(2)}',
                                                         style: TextStyle(
@@ -430,7 +431,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               'Mileage Fee',
                                                               style: TextStyle(
@@ -441,7 +442,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 13,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               'Fuel',
                                                               style: TextStyle(
@@ -452,7 +453,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 12,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               'DEF',
                                                               style: TextStyle(
@@ -463,7 +464,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 12,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               'Driver Pay',
                                                               style: TextStyle(
@@ -476,7 +477,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                             )
                                                           ],
                                                         ),
-                                                        20.widthBox,
+                                                       SizedBox(width:20),
                                                         Column(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
@@ -485,7 +486,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                               CrossAxisAlignment
                                                                   .start,
                                                           children: [
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               '\$${getValue(data['mileageFee'][index]['milageFeePerMile']).toStringAsFixed(3)}',
                                                               style: TextStyle(
@@ -496,7 +497,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 12,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               '\$${getValue(data['mileageFee'][index]['fuelFeePerMile']).toStringAsFixed(3)}',
                                                               style: TextStyle(
@@ -507,7 +508,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 12,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               '\$${getValue(data['mileageFee'][index]['defFeePerMile']).toStringAsFixed(3)}',
                                                               style: TextStyle(
@@ -518,7 +519,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 fontSize: 12,
                                                               ),
                                                             ),
-                                                            10.heightBox,
+                                                         
                                                             Text(
                                                               '\$${getValue(data['mileageFee'][index]['driverPayFeePerMile']).toStringAsFixed(3)}',
                                                               style: TextStyle(
@@ -545,7 +546,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            10.heightBox,
+                         
                             const Text(
                               'Truck loads',
                               style: TextStyle(
@@ -554,7 +555,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            10.heightBox,
+                         
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.28,
                               child: ListView(
@@ -607,7 +608,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            10.heightBox,
+                                         
                                             Padding(
                                               padding:
                                                   const EdgeInsets.all(12.0),
@@ -632,7 +633,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Freight Charges',
                                                         style: TextStyle(
@@ -642,7 +643,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Estimated Tolls',
                                                         style: TextStyle(
@@ -652,7 +653,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         'Other Cost',
                                                         style: TextStyle(
@@ -662,10 +663,10 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                     ],
                                                   ),
-                                                  20.widthBox,
+                                                 SizedBox(width:20),
                                                   Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -682,7 +683,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         "\$${load['freightCharge'].toString()}",
                                                         style: TextStyle(
@@ -692,7 +693,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         "\$${load['estimatedTolls'].toString()}",
                                                         style: TextStyle(
@@ -702,7 +703,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                       Text(
                                                         "\$${load['otherCosts'].toString()}",
                                                         style: TextStyle(
@@ -712,7 +713,7 @@ class HistoryDetailsScreen extends StatelessWidget {
                                                                 robotoRegular,
                                                             fontSize: 13),
                                                       ),
-                                                      10.heightBox,
+                                                   
                                                     ],
                                                   )
                                                 ],

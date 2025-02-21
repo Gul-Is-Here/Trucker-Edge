@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/constants/fonts_strings.dart';
-import 'package:trucker_edge/screens/load_screen/load_screen.dart';
+import 'package:trucker_edge/screens/load_screen/load_screen.dart'; // ✅ LoadScreen Imported
 import 'package:trucker_edge/widgets/my_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -41,17 +41,19 @@ class _UpdateScreenState extends State<UpdateScreen> {
     super.dispose();
   }
 
-  // Function to fetch the data and refresh the state
+  // ✅ Fetch only active (non-transferred) data
   void _fetchData() {
     setState(() {
       _futureData = FirebaseServices().fetchAllEntriesForEditing();
     });
   }
 
-  // Function to start auto-refresh every 60 seconds
+  // ✅ Auto-refresh every 60 seconds
   void _startAutoRefresh() {
     _autoRefreshTimer = Timer.periodic(const Duration(minutes: 1), (timer) {
-      _fetchData(); // Fetch new data and refresh the state
+      if (mounted) {
+        _fetchData(); // Fetch new data and refresh the state
+      }
     });
   }
 
@@ -67,22 +69,36 @@ class _UpdateScreenState extends State<UpdateScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return Center(
-                  child: CircularProgressIndicator(
-                color: AppColor().secondaryAppColor,
-              ));
+                child: CircularProgressIndicator(
+                  color: AppColor().secondaryAppColor,
+                ),
+              );
             }
 
             if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
+              return Center(
+                child: Text('Error loading data: ${snapshot.error}'),
+              );
             }
 
             var data = snapshot.data ?? [];
+
+            // ✅ If no entries are available, navigate to the Load Screen
             if (data.isEmpty) {
+              Future.delayed(Duration.zero, () {
+                Get.off(() => LoadScreen(
+                      isUpdate: false,
+                      documentId: '', // No document available
+                      homeController: widget.homeController,
+                      loadData: {}, // Empty data since it's a new load
+                    ));
+              });
+
               return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('No entries available.'),
+                    Text('No entries available. Redirecting to Load Screen...'),
                   ],
                 ),
               );
@@ -142,11 +158,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
                         ? DateFormat('hh:mm:ss a').format(timestamp)
                         : 'N/A';
                     var loadId = load['id'] ?? 'Unknown';
+
                     return DataRow(
                       cells: <DataCell>[
-                        DataCell(Text(loadId,
-                            style: const TextStyle(
-                                fontFamily: robotoRegular, fontSize: 14))),
+                        DataCell(Text(
+                          loadId,
+                          style: const TextStyle(
+                              fontFamily: robotoRegular, fontSize: 14),
+                        )),
                         DataCell(Text(
                           date,
                           style: const TextStyle(
@@ -176,7 +195,6 @@ class _UpdateScreenState extends State<UpdateScreen> {
                                 },
                                 child: const Text('Edit'),
                               ),
-                              // Removed delete button as requested
                             ],
                           ),
                         ),
@@ -192,4 +210,3 @@ class _UpdateScreenState extends State<UpdateScreen> {
     );
   }
 }
-

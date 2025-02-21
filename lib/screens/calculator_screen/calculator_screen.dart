@@ -1,7 +1,7 @@
 import 'package:trucker_edge/widgets/custome_textFormField.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 import '../../constants/colors.dart';
 import '../../constants/fonts_strings.dart';
 import '../../controllers/home_controller.dart';
@@ -275,7 +275,7 @@ class _CalculatorScreenState extends State<CalculatorScreen> {
                                         fontWeight: FontWeight.bold,
                                       ),
                                     ),
-                                    10.widthBox,
+                                   SizedBox(width:10),
                                     IconButton(
                                       onPressed: () {
                                         showEditConfirmationDialog(context);

@@ -4,7 +4,7 @@ import 'package:trucker_edge/constants/fonts_strings.dart';
 import 'package:trucker_edge/constants/image_strings.dart';
 import 'package:trucker_edge/widgets/my_drawer_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 class TutorialScreen extends StatefulWidget {
   const TutorialScreen({super.key});
