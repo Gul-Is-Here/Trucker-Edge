@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 import '../constants/fonts_strings.dart';
 
@@ -22,7 +22,7 @@ class CustomeRowWidget extends StatelessWidget {
             fontSize: 13,
           ),
         ),
-        10.widthBox,
+    SizedBox(width:10),
         Text(
           '\$$values',
           style: const TextStyle(

@@ -9,7 +9,7 @@ import 'package:trucker_edge/screens/history_screen/tutorial_screen.dart';
 import 'package:trucker_edge/screens/home_screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 import '../screens/charts_screen/chart_screen.dart';
 
@@ -28,12 +28,12 @@ class MyDrawerWidget extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Column(
               children: [
-                35.heightBox,
+                SizedBox(height: 35),
                 Image.asset(
                   appLogo1,
                   width: 200,
                 ),
-                10.heightBox,
+                SizedBox(height: 10),
                 Divider(),
                 ListTile(
                   leading: Icon(

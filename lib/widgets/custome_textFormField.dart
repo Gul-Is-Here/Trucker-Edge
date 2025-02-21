@@ -2,7 +2,7 @@ import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/constants/fonts_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 Widget buildTextFormField({
   bool? isEnable,
@@ -32,7 +32,7 @@ Widget buildTextFormField({
               fontSize: 12,
               fontWeight: FontWeight.bold),
         ),
-        5.heightBox,
+       SizedBox(height:5),
         SizedBox(
           // height: 70,
           child: TextFormField(

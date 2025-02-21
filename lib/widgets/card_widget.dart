@@ -1,7 +1,7 @@
 import 'package:trucker_edge/constants/colors.dart';
 import 'package:trucker_edge/constants/fonts_strings.dart';
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 class CardWidget extends StatelessWidget {
   final String butonText;
@@ -35,7 +35,7 @@ class CardWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              10.heightBox,
+          SizedBox(height:10),
               TextButton(
                 onPressed: onTap,
                 child: Text(

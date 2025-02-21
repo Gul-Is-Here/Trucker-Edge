@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trucker_edge/controllers/home_controller.dart';
 import 'package:trucker_edge/widgets/addLoad_dialogBox.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 import '../../constants/colors.dart';
 import '../../constants/fonts_strings.dart';
 import '../../services/firebase_services.dart';
@@ -163,7 +163,7 @@ class _LoadScreenState extends State<LoadScreen> {
                                         ),
                                       ),
                                     ),
-                                    10.heightBox,
+                                    SizedBox(height:10),
                                     buildTextFormField(
                                       controller: widget.homeController
                                           .freightChargeControllers[index],
@@ -320,7 +320,7 @@ class _LoadScreenState extends State<LoadScreen> {
                                         ),
                                       ],
                                     ),
-                                    20.heightBox,
+                                 SizedBox(height:20),
                                   ],
                                 ),
                               ),
@@ -328,7 +328,7 @@ class _LoadScreenState extends State<LoadScreen> {
                           },
                         ),
                       ),
-                      20.heightBox,
+               SizedBox(height:20),
                     ],
                   ),
                 ),

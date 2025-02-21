@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../app_classes/app_class.dart';
+import '../constants/colors.dart';
 import '../screens/load_screen/load_screen.dart';
 
 class FirebaseServices {
@@ -359,8 +360,8 @@ class FirebaseServices {
     required List<String> dispatchedMilesControllers,
     required List<String> estimatedTollsControllers,
     required List<String> otherCostsControllers,
-    required BuildContext context, // Add context for navigation
-    required HomeController homeController, // Add controller for navigation
+    required BuildContext context, // ✅ Used for error handling
+    required HomeController homeController, // ✅ Navigation to home
   }) async {
     User? user = auth.currentUser;
     if (user != null) {
@@ -368,7 +369,7 @@ class FirebaseServices {
         bool documentExists = await checkIfCalculatedValuesDocumentExists();
 
         if (documentExists) {
-          // Document exists, navigate to the update screen
+          // ✅ If document exists, get the first one and navigate to LoadScreen
           QuerySnapshot existingDocsSnapshot = await firestore
               .collection('users')
               .doc(user.uid)
@@ -379,16 +380,25 @@ class FirebaseServices {
           var loadData =
               await FirebaseServices().fetchEntryForEditing(existingDocId);
 
-          Get.to(
-            () => LoadScreen(
-              isUpdate: true,
-              documentId: existingDocId,
-              homeController: homeController,
-              loadData: loadData,
+          // ✅ Show a loading indicator before navigation
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => Center(
+              child: CircularProgressIndicator(
+                  color: AppColor().secondaryAppColor),
             ),
           );
+
+          // ✅ Navigate to LoadScreen
+          Get.off(() => LoadScreen(
+                isUpdate: true,
+                documentId: existingDocId,
+                homeController: homeController,
+                loadData: loadData,
+              ));
         } else {
-          // No document exists, create a new one
+          // ✅ No document exists, create a new one
           String loadsId = DateTime.now().millisecondsSinceEpoch.toString();
           DocumentReference newValuesDocRef = firestore
               .collection('users')
@@ -404,6 +414,8 @@ class FirebaseServices {
             'totalProfit': totalProfit,
             'timestamp': FieldValue.serverTimestamp(),
             'updateTime': DateTime.now(),
+            'transferred':
+                false, // ✅ Ensure newly added entries are marked as active
             'loads': List.generate(freightChargeControllers.length, (index) {
               return {
                 'freightCharge':
@@ -417,9 +429,29 @@ class FirebaseServices {
               };
             }),
           });
+
+          // ✅ Show success message
+          Get.snackbar(
+            "Success",
+            "New calculated values saved!",
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.BOTTOM,
+          );
         }
-      } catch (e) {}
-    } else {}
+      } catch (e) {
+        print("Error storing calculated values: $e");
+        Get.snackbar(
+          "Error",
+          "Something went wrong. Please try again.",
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } else {
+      print("No user authenticated.");
+    }
   }
 
   Future<bool> checkIfCalculatedValuesDocumentExists() async {
@@ -529,16 +561,21 @@ class FirebaseServices {
             .collection('users')
             .doc(user.uid)
             .collection('calculatedValues')
+            .where('transferred',
+                isEqualTo: false) // ✅ Exclude transferred data
             .get();
 
         return querySnapshot.docs.map((doc) {
           Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
           data['id'] = doc.id; // Include the document ID
-          docId = data['id'];
           return data;
         }).toList();
-      } catch (e) {}
-    } else {}
+      } catch (e) {
+        print("Error fetching data: $e");
+      }
+    } else {
+      print("No authenticated user found.");
+    }
     return [];
   }
 

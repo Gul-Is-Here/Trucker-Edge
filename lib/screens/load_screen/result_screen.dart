@@ -5,7 +5,7 @@ import 'package:trucker_edge/widgets/my_drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:trucker_edge/controllers/home_controller.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 import '../../widgets/result_widget.dart';
 
 class ResultsScreen extends StatelessWidget {
@@ -20,7 +20,7 @@ class ResultsScreen extends StatelessWidget {
       appBar: AppBar(),
       body: Column(
         children: [
-          10.heightBox,
+          SizedBox(height:10),
           const Center(
             child: Text(
               'Summary/Results',
@@ -66,7 +66,7 @@ class ResultsScreen extends StatelessWidget {
                       value:
                           '\$${homeController.totalDispatchedMiles.value.toStringAsFixed(2)}',
                     ),
-                    10.heightBox,
+                 SizedBox(height:10),
                   ],
                 ),
               ),

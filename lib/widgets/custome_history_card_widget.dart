@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:velocity_x/velocity_x.dart';
+// import 'package:velocity_x/velocity_x.dart';
 
 import '../constants/fonts_strings.dart';
 
@@ -25,7 +25,7 @@ class CustomeHistoryCardWidget extends StatelessWidget {
                   fontSize: 13,
                 ),
               ),
-              10.widthBox,
+             SizedBox(width:10),
               Column(
                 children: [
                   Text(
