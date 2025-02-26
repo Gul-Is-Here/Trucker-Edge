@@ -196,29 +196,16 @@ class NotificationServices {
   }
 
   Future<void> requestSmsPermission() async {
-    if (Platform.isAndroid) {
-      int sdkInt = int.tryParse(await getAndroidVersion()) ?? 0;
+    var status = await Permission.sms.status;
 
-      if (await Permission.sms.isGranted) {
-        print("SMS permission already granted");
-        print(sdkInt);
-        return;
-      }
+    if (!status.isGranted) {
+      status = await Permission.sms.request();
+    }
 
-      PermissionStatus status = await Permission.sms.request();
-
-      if (status.isGranted) {
-        print("SMS permission granted");
-      } else if (status.isDenied) {
-        print("SMS permission denied");
-      } else if (status.isPermanentlyDenied) {
-        print("SMS permission permanently denied. Open settings to enable.");
-        openAppSettings();
-      }
-    } else if (Platform.isIOS) {
-      print(
-          "iOS does not allow SMS permission requests. Use an alternative method.");
-      await openSmsApp(); // Open Messages app for OTP
+    if (status.isGranted) {
+      print("SMS permission granted");
+    } else {
+      print("SMS permission denied");
     }
   }
 

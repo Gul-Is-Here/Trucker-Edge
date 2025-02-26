@@ -31,7 +31,7 @@ android {
         applicationId "com.csgpaskistan.truckeredge"
         minSdk = 23
         targetSdk = 35
-        versionCode = 11
+        versionCode = 12
         versionName = flutter.versionName
 
         // Enable MultiDex
@@ -56,6 +56,7 @@ android {
 
 dependencies {
     implementation 'com.android.support:multidex:2.0.1' // Add this line for MultiDex support
+    
 }
 
 flutter {
