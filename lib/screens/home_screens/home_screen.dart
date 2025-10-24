@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:trucker_edge/services/notification_services.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:trucker_edge/app_classes/app_class.dart';
 import 'package:trucker_edge/constants/colors.dart';
@@ -30,7 +31,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-
+    NotificationServices().requestNotificationPermission();
     homeController.fetchMileageValues();
     homeController.fetchTruckPaymentIntialValues();
     FirebaseServices().fetchIsEditabbleMilage();

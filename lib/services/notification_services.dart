@@ -7,6 +7,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class NotificationServices {
   FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -65,7 +67,9 @@ class NotificationServices {
     print("iOS Local Notification Received: $title");
   }
 
-  void requestNotificationPermission() async {
+  //Sms Permissions
+
+  Future<void> requestNotificationPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
       announcement: true,
@@ -189,6 +193,38 @@ class NotificationServices {
     }).onError((error) {
       print("Error setting up token refresh listener: $error");
     });
+  }
+
+  Future<void> requestSmsPermission() async {
+    var status = await Permission.sms.status;
+
+    if (!status.isGranted) {
+      status = await Permission.sms.request();
+    }
+
+    if (status.isGranted) {
+      print("SMS permission granted");
+    } else {
+      print("SMS permission denied");
+    }
+  }
+
+// Helper function to get Android version
+  Future<String> getAndroidVersion() async {
+    return (await Process.run('getprop', ['ro.build.version.sdk']))
+        .stdout
+        .toString()
+        .trim();
+  }
+
+// Alternative method for iOS: Open Messages app
+  Future<void> openSmsApp() async {
+    final Uri smsUri = Uri.parse("sms:");
+    if (await canLaunchUrl(smsUri)) {
+      await launchUrl(smsUri);
+    } else {
+      print("Could not open Messages app.");
+    }
   }
 }
 

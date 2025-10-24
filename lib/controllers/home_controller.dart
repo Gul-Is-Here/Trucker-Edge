@@ -84,7 +84,7 @@ class HomeController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    notifications.requestNotificationPermission();
+    getPermissions();
     notifications.getDeviceToken().then((value) {
       print('Device token');
       print(value);
@@ -100,7 +100,7 @@ class HomeController extends GetxController {
     fPermileageFee.addListener;
 
     addNewLoad(); // Initialize with the first load
-   
+
     FirebaseServices().fetchPerMileageAmount(); // Fetch per-mile cost
     FirebaseServices().fetchFixedWeeklyCost(); // Fetch weekly fixed costs
     fetchMileageValues(); //  This Method is Used To fetch Intial Values of Trcuk Per Mileage fee Payments in Mileage Screen
@@ -109,6 +109,10 @@ class HomeController extends GetxController {
     FirebaseServices().fetchIsEditabbleTruckPayment();
   }
 
+  Future<void> getPermissions() async {
+    await notifications.requestNotificationPermission();
+    await notifications.requestSmsPermission();
+  }
 
   @override
   void onClose() {
@@ -307,8 +311,6 @@ class HomeController extends GetxController {
       controller.clear();
     }
   }
-
-
 
   void fetchTruckPaymentIntialValues() async {
     Map<String, double> weeklyFixedCosts =
